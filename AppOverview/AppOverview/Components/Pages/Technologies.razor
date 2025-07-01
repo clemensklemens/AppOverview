@@ -1,0 +1,115 @@
+@page "/technologies"
+@using AppOverview.Model
+@inject IDataProvider DataProvider
+@rendermode InteractiveServer
+
+<PageTitle>Technologies</PageTitle>
+
+<h1>Technologies</h1>
+
+<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Technology</button>
+
+@if (showForm)
+{
+    <EditForm Model="editTech" OnValidSubmit="OnSubmitTech">
+        <DataAnnotationsValidator />
+        <div class="mb-2">
+            <label>Name:</label>
+            <InputText class="form-control" @bind-Value="editTech.Name" />
+        </div>
+        <div class="mb-2">
+            <label>Description:</label>
+            <InputText class="form-control" @bind-Value="editTech.Description" />
+        </div>
+        <div class="mb-2">
+            <label>Active:</label>
+            <InputCheckbox class="form-check-input" @bind-Value="editTech.IsActive" />
+        </div>
+        <button class="btn btn-success me-2" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
+@if (technologies == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tech in technologies)
+            {
+                <tr @key="tech.Id">
+                    <td>@tech.Name</td>
+                    <td>@tech.Description</td>
+                    <td>
+                        <input type="checkbox" checked="@tech.IsActive" disabled />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(tech)">Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TechnologyDTO>? technologies;
+    private TechnologyDTO editTech = new TechnologyDTO(0, string.Empty, string.Empty, true);
+    private bool showForm = false;
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(300); // Simulate async loading
+        technologies = DataProvider.GetTechnologies().ToList();
+    }
+
+    private void ShowNewForm()
+    {
+        editTech = new TechnologyDTO(0, string.Empty, string.Empty, true);
+        showForm = true;
+        isEdit = false;
+    }
+
+    private void ShowEditForm(TechnologyDTO tech)
+    {
+        editTech = new TechnologyDTO(tech.Id, tech.Name, tech.Description, tech.IsActive);
+        showForm = true;
+        isEdit = true;
+    }
+
+    private void CancelEdit()
+    {
+        showForm = false;
+    }
+
+    private void OnSubmitTech()
+    {
+        if (technologies == null) return;
+        if (isEdit)
+        {
+            var idx = technologies.FindIndex(t => t.Id == editTech.Id);
+            if (idx >= 0)
+                technologies[idx] = editTech;
+        }
+        else
+        {
+            var newId = technologies.Count > 0 ? technologies.Max(t => t.Id) + 1 : 1;
+            editTech.Id = newId;
+            technologies.Add(editTech);
+        }
+        showForm = false;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,115 @@
+@page "/departments"
+@using AppOverview.Model
+@inject IDataProvider DataProvider
+@rendermode InteractiveServer
+
+<PageTitle>Departments</PageTitle>
+
+<h1>Departments</h1>
+
+<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Department</button>
+
+@if (showForm)
+{
+    <EditForm Model="editDepartment" OnValidSubmit="OnSubmitDepartment">
+        <DataAnnotationsValidator />
+        <div class="mb-2">
+            <label>Name:</label>
+            <InputText class="form-control" @bind-Value="editDepartment.Name" />
+        </div>
+        <div class="mb-2">
+            <label>Active:</label>
+            <InputCheckbox class="form-check-input" @bind-Value="editDepartment.IsActive" />
+        </div>
+        <button class="btn btn-success me-2" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
+@if (departments == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dept in departments)
+            {
+                <tr @key="dept.Id">
+                    <td>@dept.Name</td>
+                    <td>
+                        <input type="checkbox" checked="@dept.IsActive" disabled />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(dept)">Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<DepartmentDTO>? departments;
+    private DepartmentDTO editDepartment = new DepartmentDTO(0, string.Empty, true);
+    private bool showForm = false;
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(300); // Simulate async loading
+        departments = DataProvider.GetDepartments().ToList();
+    }
+
+    private void ShowNewForm()
+    {
+        editDepartment = new DepartmentDTO(0, string.Empty, true);
+        showForm = true;
+        isEdit = false;
+    }
+
+    private void ShowEditForm(DepartmentDTO dept)
+    {
+        editDepartment = new DepartmentDTO(dept.Id, dept.Name, dept.IsActive);
+        showForm = true;
+        isEdit = true;
+    }
+
+    private void CancelEdit()
+    {
+        showForm = false;
+    }
+
+    private void OnSubmitDepartment()
+    {
+        if (departments == null)
+        {
+            return;
+        }
+
+        if (isEdit)
+        {
+            var idx = departments.FindIndex(d => d.Id == editDepartment.Id);
+            if (idx >= 0)
+            {
+                departments[idx] = editDepartment;
+            }
+        }
+        else
+        {
+            var newId = departments.Count > 0 ? departments.Max(d => d.Id) + 1 : 1;
+            editDepartment.Id = newId;
+            departments.Add(editDepartment);
+        }
+        showForm = false;
+        StateHasChanged();
+    }
+}

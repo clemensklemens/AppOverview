@@ -1,0 +1,139 @@
+@page "/entities"
+@using AppOverview.Model
+@inject IDataProvider DataProvider
+@rendermode InteractiveServer
+
+<PageTitle>Entities</PageTitle>
+
+<h1>Entities</h1>
+
+<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
+
+@if (showForm)
+{
+    <EditForm Model="editEntity" OnValidSubmit="OnSubmitEntity">
+        <DataAnnotationsValidator />
+        <div class="mb-2">
+            <label>Name:</label>
+            <InputText class="form-control" @bind-Value="editEntity.Name" />
+        </div>
+        <div class="mb-2">
+            <label>Description:</label>
+            <InputText class="form-control" @bind-Value="editEntity.Description" />
+        </div>
+        <div class="mb-2">
+            <label>Type:</label>
+            <InputText class="form-control" @bind-Value="editEntity.Type" />
+        </div>
+        <div class="mb-2">
+            <label>Department:</label>
+            <InputText class="form-control" @bind-Value="editEntity.Department" />
+        </div>
+        <div class="mb-2">
+            <label>Technology:</label>
+            <InputText class="form-control" @bind-Value="editEntity.Technology" />
+        </div>
+        <div class="mb-2">
+            <label>Hex Color:</label>
+            <InputText class="form-control" @bind-Value="editEntity.HexColor" />
+        </div>
+        <div class="mb-2">
+            <label>Active:</label>
+            <InputCheckbox class="form-check-input" @bind-Value="editEntity.IsActive" />
+        </div>
+        <button class="btn btn-success me-2" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
+@if (entities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Department</th>
+                <th>Technology</th>
+                <th>Hex Color</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entity in entities)
+            {
+                <tr @key="entity.Id">
+                    <td>@entity.Name</td>
+                    <td>@entity.Description</td>
+                    <td>@entity.Type</td>
+                    <td>@entity.Department</td>
+                    <td>@entity.Technology</td>
+                    <td><span style="color:@entity.HexColor">@entity.HexColor</span></td>
+                    <td>
+                        <input type="checkbox" checked="@entity.IsActive" disabled />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(entity)">Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<EntityDTO>? entities;
+    private EntityDTO editEntity = new EntityDTO(0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, true);
+    private bool showForm = false;
+    private bool isEdit = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(300); // Simulate async loading
+        entities = DataProvider.GetEntities().ToList();
+    }
+
+    private void ShowNewForm()
+    {
+        editEntity = new EntityDTO(0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, true);
+        showForm = true;
+        isEdit = false;
+    }
+
+    private void ShowEditForm(EntityDTO entity)
+    {
+        editEntity = new EntityDTO(entity.Id, entity.Name, entity.Description, entity.Type, entity.Department, entity.Technology, entity.HexColor, entity.IsActive);
+        showForm = true;
+        isEdit = true;
+    }
+
+    private void CancelEdit()
+    {
+        showForm = false;
+    }
+
+    private void OnSubmitEntity()
+    {
+        if (entities == null) return;
+        if (isEdit)
+        {
+            var idx = entities.FindIndex(e => e.Id == editEntity.Id);
+            if (idx >= 0)
+                entities[idx] = editEntity;
+        }
+        else
+        {
+            var newId = entities.Count > 0 ? entities.Max(e => e.Id) + 1 : 1;
+            editEntity.Id = newId;
+            entities.Add(editEntity);
+        }
+        showForm = false;
+        StateHasChanged();
+    }
+}
