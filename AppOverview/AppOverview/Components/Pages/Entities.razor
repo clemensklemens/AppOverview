@@ -23,37 +23,42 @@
         </div>
         <div class="mb-2">
             <label>Type:</label>
-            <InputText class="form-control" @bind-Value="editEntity.Type" />
+            <InputSelect class="form-control" @bind-Value="editEntity.TypeId" >
+                <option value="">Select Type</option>
+                @if (entityTypes != null)
+                {
+                    foreach (var entityType in entityTypes)
+                    {
+                        <option value="@entityType.Id">@entityType.Name</option>
+                    }
+                }
+            </InputSelect>
         </div>
         <div class="mb-2">
             <label>Department:</label>
-            <InputSelect class="form-control" @bind-Value="editEntity.Department">
+            <InputSelect class="form-control" @bind-Value="editEntity.DepartmentId">
                 <option value="">Select department</option>
                 @if (departments != null)
                 {
-                    foreach (var dept in departments)
+                    foreach (var department in departments)
                     {
-                        <option value="@dept.Name">@dept.Name</option>
+                        <option value="@department.Id">@department.Name</option>
                     }
                 }
             </InputSelect>
         </div>
         <div class="mb-2">
             <label>Technology:</label>
-            <InputSelect class="form-control" @bind-Value="editEntity.Technology">
+            <InputSelect class="form-control" @bind-Value="editEntity.TechnologyId">
                 <option value="">Select technology</option>
                 @if (technologies != null)
                 {
-                    foreach (var tech in technologies)
+                    foreach (var technology in technologies)
                     {
-                        <option value="@tech.Name">@tech.Name</option>
+                        <option value="@technology.Id">@technology.Name</option>
                     }
                 }
             </InputSelect>
-        </div>
-        <div class="mb-2">
-            <label>Hex Color:</label>
-            <InputText class="form-control" type="color" @bind-Value="editEntity.HexColor" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
@@ -78,7 +83,7 @@ else
                 <th>Type</th>
                 <th>Department</th>
                 <th>Technology</th>
-                <th>Hex Color</th>
+                <th>Color</th>
                 <th>Active</th>
                 <th></th>
             </tr>
@@ -109,28 +114,34 @@ else
     private List<EntityDTO>? entities;
     private List<DepartmentDTO>? departments;
     private List<TechnologyDTO>? technologies;
-    private EntityDTO editEntity = new EntityDTO(0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, true);
+    private List<EntityTypeDTO>? entityTypes;
+    private EntityDTO editEntity = new EntityDTO();
     private bool showForm = false;
     private bool isEdit = false;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(300); // Simulate async loading
-        entities = DataProvider.GetEntities().ToList();
-        departments = DataProvider.GetDepartments().ToList();
-        technologies = DataProvider.GetTechnologies().ToList();
+        var enityData = await DataProvider.GetEntitiesAsync();
+        entities = enityData.ToList();
+        var departmentData = await DataProvider.GetDepartmentsAsync();
+        departments = departmentData.ToList();
+        var technologyData = await DataProvider.GetTechnologiesAsync();
+        technologies = technologyData.ToList();
+        var entityTypeData = await DataProvider.GetEntityTypesAsync();
+        entityTypes = entityTypeData.ToList();
     }
 
     private void ShowNewForm()
     {
-        editEntity = new EntityDTO(0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, true);
+        editEntity = new EntityDTO();
         showForm = true;
         isEdit = false;
     }
 
     private void ShowEditForm(EntityDTO entity)
     {
-        editEntity = new EntityDTO(entity.Id, entity.Name, entity.Description, entity.Type, entity.Department, entity.Technology, entity.HexColor, entity.IsActive);
+        editEntity = entity;
         showForm = true;
         isEdit = true;
     }
@@ -140,20 +151,28 @@ else
         showForm = false;
     }
 
-    private void OnSubmitEntity()
+    private async Task OnSubmitEntity()
     {
-        if (entities == null) return;
+        if (entities == null)
+        {
+            return;
+        }
+
         if (isEdit)
         {
             var idx = entities.FindIndex(e => e.Id == editEntity.Id);
             if (idx >= 0)
+            {
                 entities[idx] = editEntity;
+                await DataProvider.UpdateEntityAsync(editEntity);
+            }            
         }
         else
         {
             var newId = entities.Count > 0 ? entities.Max(e => e.Id) + 1 : 1;
             editEntity.Id = newId;
             entities.Add(editEntity);
+            await DataProvider.AddEntityAsync(editEntity);
         }
         showForm = false;
         StateHasChanged();
