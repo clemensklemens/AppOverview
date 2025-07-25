@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace AppOverview.Model
+﻿namespace AppOverview.Model
 {
     public class EntityDTO
     {        
@@ -13,7 +11,7 @@ namespace AppOverview.Model
         public string Department { get; set; } = string.Empty;        
         public int TechnologyId { get; set; } = 0;
         public string Technology { get; set; } = string.Empty;
-        public string HexColor { get; set; } = "#000000";
+        public string ColorHex { get; set; } = "#000000";
         public bool IsActive { get; set; } = true;        
         public List<EntityDTO> Dependencies { get; set; } = []; //maybe also needs relation type
 

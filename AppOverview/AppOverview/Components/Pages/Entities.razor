@@ -97,7 +97,7 @@ else
                     <td>@entity.Type</td>
                     <td>@entity.Department</td>
                     <td>@entity.Technology</td>
-                    <td><span style="color:@entity.HexColor">@entity.HexColor</span></td>
+                    <td><span style="color:@entity.ColorHex">@entity.ColorHex</span></td>
                     <td>
                         <input type="checkbox" checked="@entity.IsActive" disabled />
                     </td>
@@ -158,6 +158,7 @@ else
             return;
         }
 
+        editEntity = FindNestedValues(editEntity);
         if (isEdit)
         {
             var idx = entities.FindIndex(e => e.Id == editEntity.Id);
@@ -176,5 +177,14 @@ else
         }
         showForm = false;
         StateHasChanged();
+    }
+
+    private EntityDTO FindNestedValues(EntityDTO dto)
+    {        
+        dto.Department = departments?.FirstOrDefault(d => d.Id == dto.DepartmentId)?.Name ?? string.Empty;
+        dto.Technology = technologies?.FirstOrDefault(t => t.Id == dto.TechnologyId)?.Name ?? string.Empty;
+        dto.Type = entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.Name ?? string.Empty;
+        dto.ColorHex = entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
+        return dto;
     }
 }

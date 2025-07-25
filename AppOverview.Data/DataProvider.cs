@@ -18,9 +18,9 @@ namespace AppOverview.Data
         };
         private static List<EntityDTO> _entities = new List<EntityDTO>()
         {            
-            new EntityDTO { Id = 1, Name = "Entity Alpha", Description = "First test entity", TypeId = 1, Type = "Type 1", DepartmentId = 1, Department = "HR", TechnologyId = 1, Technology = ".NET", HexColor = "#FF0000", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 2, Name = "Entity Beta", Description = "Second test entity", TypeId = 2, Type = "Type 2", DepartmentId = 2, Department = "IT", TechnologyId = 2, Technology = "JavaScript", HexColor = "#00FF00", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 3, Name = "Entity Gamma", Description = "Third test entity", TypeId = 3, Type = "Type 3", DepartmentId = 3, Department = "Finance", TechnologyId = 3, Technology = "Python", HexColor = "#0000FF", IsActive = false, Dependencies = new List<EntityDTO>() }
+            new EntityDTO { Id = 1, Name = "Entity Alpha", Description = "First test entity", TypeId = 1, Type = "Type 1", DepartmentId = 1, Department = "HR", TechnologyId = 1, Technology = ".NET", ColorHex = "#FF0000", IsActive = true, Dependencies = new List<EntityDTO>() },
+            new EntityDTO { Id = 2, Name = "Entity Beta", Description = "Second test entity", TypeId = 2, Type = "Type 2", DepartmentId = 2, Department = "IT", TechnologyId = 2, Technology = "JavaScript", ColorHex = "#00FF00", IsActive = true, Dependencies = new List<EntityDTO>() },
+            new EntityDTO { Id = 3, Name = "Entity Gamma", Description = "Third test entity", TypeId = 3, Type = "Type 3", DepartmentId = 3, Department = "Finance", TechnologyId = 3, Technology = "Python", ColorHex = "#0000FF", IsActive = false, Dependencies = new List<EntityDTO>() }
         };
         private static List<EntityTypeDTO> _entityTypes = new List<EntityTypeDTO>()
         {
@@ -96,7 +96,7 @@ namespace AppOverview.Data
                 existingEntity.Department = entity.Department;
                 existingEntity.TechnologyId = entity.TechnologyId;
                 existingEntity.Technology = entity.Technology;
-                existingEntity.HexColor = entity.HexColor;
+                existingEntity.ColorHex = entity.ColorHex;
                 existingEntity.IsActive = entity.IsActive;
                 existingEntity.Dependencies = entity.Dependencies;
             }
