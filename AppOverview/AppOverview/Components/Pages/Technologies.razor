@@ -9,7 +9,7 @@
 
 <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Technology</button>
 
-@if (showForm)
+@if (!showForm)
 {
     <EditForm Model="editTech" OnValidSubmit="OnSubmitTech">
         <DataAnnotationsValidator />

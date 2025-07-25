@@ -27,15 +27,33 @@
         </div>
         <div class="mb-2">
             <label>Department:</label>
-            <InputText class="form-control" @bind-Value="editEntity.Department" />
+            <InputSelect class="form-control" @bind-Value="editEntity.Department">
+                <option value="">Select department</option>
+                @if (departments != null)
+                {
+                    foreach (var dept in departments)
+                    {
+                        <option value="@dept.Name">@dept.Name</option>
+                    }
+                }
+            </InputSelect>
         </div>
         <div class="mb-2">
             <label>Technology:</label>
-            <InputText class="form-control" @bind-Value="editEntity.Technology" />
+            <InputSelect class="form-control" @bind-Value="editEntity.Technology">
+                <option value="">Select technology</option>
+                @if (technologies != null)
+                {
+                    foreach (var tech in technologies)
+                    {
+                        <option value="@tech.Name">@tech.Name</option>
+                    }
+                }
+            </InputSelect>
         </div>
         <div class="mb-2">
             <label>Hex Color:</label>
-            <InputText class="form-control" @bind-Value="editEntity.HexColor" />
+            <InputText class="form-control" type="color" @bind-Value="editEntity.HexColor" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
@@ -89,6 +107,8 @@ else
 
 @code {
     private List<EntityDTO>? entities;
+    private List<DepartmentDTO>? departments;
+    private List<TechnologyDTO>? technologies;
     private EntityDTO editEntity = new EntityDTO(0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, true);
     private bool showForm = false;
     private bool isEdit = false;
@@ -97,6 +117,8 @@ else
     {
         await Task.Delay(300); // Simulate async loading
         entities = DataProvider.GetEntities().ToList();
+        departments = DataProvider.GetDepartments().ToList();
+        technologies = DataProvider.GetTechnologies().ToList();
     }
 
     private void ShowNewForm()
