@@ -6,57 +6,58 @@ namespace AppOverview.Components.Pages
 {
     public partial class EntityTypes : ComponentBase
     {
-        private List<EntityTypeDTO>? entityTypes;
-        private EntityTypeDTO editType = new EntityTypeDTO();
-        private bool showForm = false;
-        private bool isEdit = false;
+        private List<EntityTypeDTO>? _entityTypes;
+        private EntityTypeDTO _editType = new EntityTypeDTO();
+        private bool _showForm = false;
+        private bool _isEdit = false;
 
         protected override async Task OnInitializedAsync()
         {
-            await Task.Delay(300); // Simulate async loading
-            var data = await DataProvider.GetEntityTypesAsync();
-            entityTypes = data.ToList();
+            var data = await Service.GetAllEntityTypesAsync();
+            _entityTypes = data.ToList();
         }
 
         private void ShowNewForm()
         {
-            editType = new EntityTypeDTO();
-            showForm = true;
-            isEdit = false;
+            _editType = new EntityTypeDTO();
+            _showForm = true;
+            _isEdit = false;
         }
 
         private void ShowEditForm(EntityTypeDTO type)
         {
-            editType = type;
-            showForm = true;
-            isEdit = true;
+            _editType = type;
+            _showForm = true;
+            _isEdit = true;
         }
 
         private void CancelEdit()
         {
-            showForm = false;
+            _showForm = false;
         }
 
-        private async Task OnSubmitType()
+        private async Task OnSubmitTypeAsync()
         {
-            if (entityTypes == null) return;
-            if (isEdit)
+            if (_entityTypes == null)
             {
-                var idx = entityTypes.FindIndex(t => t.Id == editType.Id);
+                return;
+            }
+
+            if (_isEdit)
+            {
+                await Service.UpdateEntityTypeAsync(_editType);
+                var idx = _entityTypes.FindIndex(t => t.Id == _editType.Id);
                 if (idx >= 0)
                 {
-                    entityTypes[idx] = editType;
-                    await DataProvider.UpdateEntityTypeAsync(editType);
+                    _entityTypes[idx] = _editType;                    
                 }
             }
             else
             {
-                var newId = entityTypes.Count > 0 ? entityTypes.Max(t => t.Id) + 1 : 1;
-                editType.Id = newId;
-                entityTypes.Add(editType);
-                await DataProvider.AddEntityTypeAsync(editType);
+                var newEntityType = await Service.AddEntityTypeAsync(_editType);
+                _entityTypes.Add(newEntityType);                
             }
-            showForm = false;
+            _showForm = false;
             StateHasChanged();
         }
     }

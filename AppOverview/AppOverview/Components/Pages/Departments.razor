@@ -1,6 +1,6 @@
 @page "/departments"
 @using AppOverview.Model
-@inject IDataProvider DataProvider
+@inject IDepartmentService Service
 @rendermode InteractiveServer
 
 <PageTitle>Departments</PageTitle>
@@ -9,24 +9,24 @@
 
 <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Department</button>
 
-@if (showForm)
+@if (_showForm)
 {
-    <EditForm Model="editDepartment" OnValidSubmit="OnSubmitDepartment">
+    <EditForm Model="_editDepartment" OnValidSubmit="OnSubmitDepartmentAsync">
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="editDepartment.Name" />
+            <InputText class="form-control" @bind-Value="_editDepartment.Name" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
-            <InputCheckbox class="form-check-input" @bind-Value="editDepartment.IsActive" />
+            <InputCheckbox class="form-check-input" @bind-Value="_editDepartment.IsActive" />
         </div>
         <button class="btn btn-success me-2" type="submit">Save</button>
         <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
     </EditForm>
 }
 
-@if (departments == null)
+@if (_departments == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -41,23 +41,18 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var dept in departments)
+            @foreach (var department in _departments)
             {
-                <tr @key="dept.Id">
-                    <td>@dept.Name</td>
+                <tr @key="department.Id">
+                    <td>@department.Name</td>
                     <td>
-                        <input type="checkbox" checked="@dept.IsActive" disabled />
+                        <input type="checkbox" checked="@department.IsActive" disabled />
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(dept)">Edit</button>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(department)">Edit</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-}
-
-<!-- Code moved to Departments.razor.cs code-behind file -->
-@code {
-    // Code moved to code-behind
 }

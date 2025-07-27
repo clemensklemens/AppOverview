@@ -1,6 +1,6 @@
 @page "/technologies"
 @using AppOverview.Model
-@inject IDataProvider DataProvider
+@inject ITechnologyService Service
 @rendermode InteractiveServer
 
 <PageTitle>Technologies</PageTitle>
@@ -9,28 +9,28 @@
 
 <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Technology</button>
 
-@if (showForm)
+@if (_showForm)
 {
-    <EditForm Model="editTechnology" OnValidSubmit="OnSubmitTech">
+    <EditForm Model="_editTechnology" OnValidSubmit="OnSubmitTechAsync">
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="editTechnology.Name" />
+            <InputText class="form-control" @bind-Value="_editTechnology.Name" />
         </div>
         <div class="mb-2">
             <label>Description:</label>
-            <InputText class="form-control" @bind-Value="editTechnology.Description" />
+            <InputText class="form-control" @bind-Value="_editTechnology.Description" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
-            <InputCheckbox class="form-check-input" @bind-Value="editTechnology.IsActive" />
+            <InputCheckbox class="form-check-input" @bind-Value="_editTechnology.IsActive" />
         </div>
         <button class="btn btn-success me-2" type="submit">Save</button>
         <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
     </EditForm>
 }
 
-@if (technologies == null)
+@if (_technologies == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -46,7 +46,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var technology in technologies)
+            @foreach (var technology in _technologies)
             {
                 <tr @key="technology.Id">
                     <td>@technology.Name</td>
@@ -61,9 +61,4 @@ else
             }
         </tbody>
     </table>
-}
-
-<!-- Code moved to Technologies.razor.cs code-behind file -->
-@code {
-    // Code moved to code-behind
 }

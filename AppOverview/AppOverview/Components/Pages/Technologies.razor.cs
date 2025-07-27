@@ -6,57 +6,58 @@ namespace AppOverview.Components.Pages
 {
     public partial class Technologies : ComponentBase
     {
-        private List<TechnologyDTO>? technologies;
-        private TechnologyDTO editTechnology = new TechnologyDTO();
-        private bool showForm = false;
-        private bool isEdit = false;
+        private List<TechnologyDTO>? _technologies;
+        private TechnologyDTO _editTechnology = new TechnologyDTO();
+        private bool _showForm = false;
+        private bool _isEdit = false;
 
         protected override async Task OnInitializedAsync()
-        {
-            await Task.Delay(300); // Simulate async loading
-            var data = await DataProvider.GetTechnologiesAsync();
-            technologies = data.ToList();
+        {            
+            var data = await Service.GetAllTechnologiesAsync();
+            _technologies = data.ToList();
         }
 
         private void ShowNewForm()
         {
-            editTechnology = new TechnologyDTO();
-            showForm = true;
-            isEdit = false;
+            _editTechnology = new TechnologyDTO();
+            _showForm = true;
+            _isEdit = false;
         }
 
         private void ShowEditForm(TechnologyDTO technology)
         {
-            editTechnology = technology;
-            showForm = true;
-            isEdit = true;
+            _editTechnology = technology;
+            _showForm = true;
+            _isEdit = true;
         }
 
         private void CancelEdit()
         {
-            showForm = false;
+            _showForm = false;
         }
 
-        private async Task OnSubmitTech()
+        private async Task OnSubmitTechAsync()
         {
-            if (technologies == null) return;
-            if (isEdit)
+            if (_technologies == null)
             {
-                var idx = technologies.FindIndex(t => t.Id == editTechnology.Id);
+                return;
+            }
+
+            if (_isEdit)
+            {
+                await Service.UpdateTechnologyAsync(_editTechnology);
+                var idx = _technologies.FindIndex(t => t.Id == _editTechnology.Id);
                 if (idx >= 0)
                 {
-                    technologies[idx] = editTechnology;
-                    await DataProvider.UpdateTechnologyAsync(editTechnology);
+                    _technologies[idx] = _editTechnology;
                 }            
             }
             else
             {
-                var newId = technologies.Count > 0 ? technologies.Max(t => t.Id) + 1 : 1;
-                editTechnology.Id = newId;
-                technologies.Add(editTechnology);
-                await DataProvider.AddTechnologyAsync(editTechnology);
+                var newTechnology = await Service.AddTechnologyAsync(_editTechnology);
+                _technologies.Add(newTechnology);
             }
-            showForm = false;
+            _showForm = false;
             StateHasChanged();
         }
     }

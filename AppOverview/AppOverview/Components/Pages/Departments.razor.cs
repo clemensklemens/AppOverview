@@ -6,61 +6,58 @@ namespace AppOverview.Components.Pages
 {
     public partial class Departments : ComponentBase
     {
-        private List<DepartmentDTO>? departments;
-        private DepartmentDTO editDepartment = new DepartmentDTO();
-        private bool showForm = false;
-        private bool isEdit = false;
+        private List<DepartmentDTO>? _departments;
+        private DepartmentDTO _editDepartment = new DepartmentDTO();
+        private bool _showForm = false;
+        private bool _isEdit = false;
 
         protected override async Task OnInitializedAsync()
         {
-            await Task.Delay(300); // Simulate async loading
-            var data = await DataProvider.GetDepartmentsAsync();
-            departments = data.ToList();
+            var data = await Service.GetAllDepartmentsAsync();
+            _departments = data.ToList();
         }
 
         private void ShowNewForm()
         {
-            editDepartment = new DepartmentDTO();
-            showForm = true;
-            isEdit = false;
+            _editDepartment = new DepartmentDTO();
+            _showForm = true;
+            _isEdit = false;
         }
 
         private void ShowEditForm(DepartmentDTO department)
         {
-            editDepartment = department;
-            showForm = true;
-            isEdit = true;
+            _editDepartment = department;
+            _showForm = true;
+            _isEdit = true;
         }
 
         private void CancelEdit()
         {
-            showForm = false;
+            _showForm = false;
         }
 
-        private async Task OnSubmitDepartment()
+        private async Task OnSubmitDepartmentAsync()
         {
-            if (departments == null)
+            if (_departments == null)
             {
                 return;
             }
 
-            if (isEdit)
+            if (_isEdit)
             {
-                var idx = departments.FindIndex(d => d.Id == editDepartment.Id);
+                await Service.UpdateDepartmentAsync(_editDepartment);
+                var idx = _departments.FindIndex(d => d.Id == _editDepartment.Id);
                 if (idx >= 0)
                 {
-                    departments[idx] = editDepartment;
-                    await DataProvider.UpdateDepartmentAsync(editDepartment);
+                    _departments[idx] = _editDepartment;                    
                 }
             }
             else
             {
-                var newId = departments.Count > 0 ? departments.Max(d => d.Id) + 1 : 1;
-                editDepartment.Id = newId;
-                departments.Add(editDepartment);
-                await DataProvider.AddDepartmentAsync(editDepartment);
+                var newDepartment = await Service.AddDepartmentAsync(_editDepartment);
+                _departments.Add(newDepartment);                
             }
-            showForm = false;
+            _showForm = false;
             StateHasChanged();
         }
     }

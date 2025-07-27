@@ -1,6 +1,6 @@
 @page "/entities"
 @using AppOverview.Model
-@inject IDataProvider DataProvider
+@inject IEntityService Service
 @rendermode InteractiveServer
 
 <PageTitle>Entities</PageTitle>
@@ -9,25 +9,25 @@
 
 <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
 
-@if (showForm)
+@if (_showForm)
 {
-    <EditForm Model="editEntity" OnValidSubmit="OnSubmitEntity">
+    <EditForm Model="_editEntity" OnValidSubmit="OnSubmitEntityAsync">
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="editEntity.Name" />
+            <InputText class="form-control" @bind-Value="_editEntity.Name" />
         </div>
         <div class="mb-2">
             <label>Description:</label>
-            <InputText class="form-control" @bind-Value="editEntity.Description" />
+            <InputText class="form-control" @bind-Value="_editEntity.Description" />
         </div>
         <div class="mb-2">
             <label>Type:</label>
-            <InputSelect class="form-control" @bind-Value="editEntity.TypeId" >
+            <InputSelect class="form-control" @bind-Value="_editEntity.TypeId">
                 <option value="">Select Type</option>
-                @if (entityTypes != null)
+                @if (_entityTypes != null)
                 {
-                    foreach (var entityType in entityTypes)
+                    foreach (var entityType in _entityTypes)
                     {
                         <option value="@entityType.Id">@entityType.Name</option>
                     }
@@ -36,11 +36,11 @@
         </div>
         <div class="mb-2">
             <label>Department:</label>
-            <InputSelect class="form-control" @bind-Value="editEntity.DepartmentId">
+            <InputSelect class="form-control" @bind-Value="_editEntity.DepartmentId">
                 <option value="">Select department</option>
-                @if (departments != null)
+                @if (_departments != null)
                 {
-                    foreach (var department in departments)
+                    foreach (var department in _departments)
                     {
                         <option value="@department.Id">@department.Name</option>
                     }
@@ -49,11 +49,11 @@
         </div>
         <div class="mb-2">
             <label>Technology:</label>
-            <InputSelect class="form-control" @bind-Value="editEntity.TechnologyId">
+            <InputSelect class="form-control" @bind-Value="_editEntity.TechnologyId">
                 <option value="">Select technology</option>
-                @if (technologies != null)
+                @if (_technologies != null)
                 {
-                    foreach (var technology in technologies)
+                    foreach (var technology in _technologies)
                     {
                         <option value="@technology.Id">@technology.Name</option>
                     }
@@ -62,14 +62,14 @@
         </div>
         <div class="mb-2">
             <label>Active:</label>
-            <InputCheckbox class="form-check-input" @bind-Value="editEntity.IsActive" />
+            <InputCheckbox class="form-check-input" @bind-Value="_editEntity.IsActive" />
         </div>
         <button class="btn btn-success me-2" type="submit">Save</button>
         <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
     </EditForm>
 }
 
-@if (entities == null)
+@if (_entities == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -89,7 +89,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var entity in entities)
+            @foreach (var entity in _entities)
             {
                 <tr @key="entity.Id">
                     <td>@entity.Name</td>
@@ -109,5 +109,3 @@ else
         </tbody>
     </table>
 }
-
-<!-- Code split to Entities.razor.cs code-behind file -->

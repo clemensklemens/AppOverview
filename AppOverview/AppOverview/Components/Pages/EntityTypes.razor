@@ -1,6 +1,6 @@
 @page "/entitytypes"
 @using AppOverview.Model
-@inject IDataProvider DataProvider
+@inject IEntityTypeService Service
 @rendermode InteractiveServer
 
 <PageTitle>Entity Types</PageTitle>
@@ -9,32 +9,32 @@
 
 <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity Type</button>
 
-@if (showForm)
+@if (_showForm)
 {
-    <EditForm Model="editType" OnValidSubmit="OnSubmitType">
+    <EditForm Model="_editType" OnValidSubmit="OnSubmitTypeAsync">
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="editType.Name" />
+            <InputText class="form-control" @bind-Value="_editType.Name" />
         </div>
         <div class="mb-2">
             <label>Description:</label>
-            <InputText class="form-control" @bind-Value="editType.Description" />
+            <InputText class="form-control" @bind-Value="_editType.Description" />
         </div>
         <div class="mb-2">
             <label>Color Hex:</label>
-            <InputText class="form-control" type="color" @bind-Value="editType.ColorHex" />
+            <InputText class="form-control" type="color" @bind-Value="_editType.ColorHex" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
-            <InputCheckbox class="form-check-input" @bind-Value="editType.IsActive" />
+            <InputCheckbox class="form-check-input" @bind-Value="_editType.IsActive" />
         </div>
         <button class="btn btn-success me-2" type="submit">Save</button>
         <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
     </EditForm>
 }
 
-@if (entityTypes == null)
+@if (_entityTypes == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -51,7 +51,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var type in entityTypes)
+            @foreach (var type in _entityTypes)
             {
                 <tr @key="type.Id">
                     <td>@type.Name</td>
@@ -67,9 +67,4 @@ else
             }
         </tbody>
     </table>
-}
-
-<!-- Code moved to EntityTypes.razor.cs code-behind file -->
-@code {
-    // Code moved to code-behind
 }

@@ -7,80 +7,67 @@ namespace AppOverview.Components.Pages
 {
     public partial class Entities : ComponentBase
     {
-        private List<EntityDTO>? entities;
-        private List<DepartmentDTO>? departments;
-        private List<TechnologyDTO>? technologies;
-        private List<EntityTypeDTO>? entityTypes;
-        private EntityDTO editEntity = new EntityDTO();
-        private bool showForm = false;
-        private bool isEdit = false;
+        private List<EntityDTO>? _entities;
+        private EntityDTO _editEntity = new EntityDTO();
+        private bool _showForm = false;
+        private bool _isEdit = false;
 
         protected override async Task OnInitializedAsync()
         {
-            await Task.Delay(300); // Simulate async loading
-            var enityData = await DataProvider.GetEntitiesAsync();
-            entities = enityData.ToList();
-            var departmentData = await DataProvider.GetDepartmentsAsync();
-            departments = departmentData.ToList();
-            var technologyData = await DataProvider.GetTechnologiesAsync();
-            technologies = technologyData.ToList();
-            var entityTypeData = await DataProvider.GetEntityTypesAsync();
-            entityTypes = entityTypeData.ToList();
+            var enityData = await Service.GetAllEntitiesAsync();
+            _entities = enityData.ToList();
         }
 
         private void ShowNewForm()
         {
-            editEntity = new EntityDTO();
-            showForm = true;
-            isEdit = false;
+            _editEntity = new EntityDTO();
+            _showForm = true;
+            _isEdit = false;
         }
 
         private void ShowEditForm(EntityDTO entity)
         {
-            editEntity = entity;
-            showForm = true;
-            isEdit = true;
+            _editEntity = entity;
+            _showForm = true;
+            _isEdit = true;
         }
 
         private void CancelEdit()
         {
-            showForm = false;
+            _showForm = false;
         }
 
-        private async Task OnSubmitEntity()
+        private async Task OnSubmitEntityAsync()
         {
-            if (entities == null)
+            if (_entities == null)
             {
                 return;
             }
 
-            editEntity = FindNestedValues(editEntity);
-            if (isEdit)
+            if (_isEdit)
             {
-                var idx = entities.FindIndex(e => e.Id == editEntity.Id);
+                await Service.UpdateEntityAsync(_editEntity);
+                var idx = _entities.FindIndex(e => e.Id == _editEntity.Id);
                 if (idx >= 0)
                 {
-                    entities[idx] = editEntity;
-                    await DataProvider.UpdateEntityAsync(editEntity);
+                    _entities[idx] = _editEntity;
                 }
             }
             else
             {
-                var newId = entities.Count > 0 ? entities.Max(e => e.Id) + 1 : 1;
-                editEntity.Id = newId;
-                entities.Add(editEntity);
-                await DataProvider.AddEntityAsync(editEntity);
+                var newEntity = await Service.AddEntityAsync(_editEntity);
+                _entities.Add(newEntity);
             }
-            showForm = false;
+            _showForm = false;
             StateHasChanged();
         }
 
         private EntityDTO FindNestedValues(EntityDTO dto)
         {
-            dto.Department = departments?.FirstOrDefault(d => d.Id == dto.DepartmentId)?.Name ?? string.Empty;
-            dto.Technology = technologies?.FirstOrDefault(t => t.Id == dto.TechnologyId)?.Name ?? string.Empty;
-            dto.Type = entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.Name ?? string.Empty;
-            dto.ColorHex = entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
+            dto.Department = _departments?.FirstOrDefault(d => d.Id == dto.DepartmentId)?.Name ?? string.Empty;
+            dto.Technology = _technologies?.FirstOrDefault(t => t.Id == dto.TechnologyId)?.Name ?? string.Empty;
+            dto.Type = _entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.Name ?? string.Empty;
+            dto.ColorHex = _entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
             return dto;
         }
     }
