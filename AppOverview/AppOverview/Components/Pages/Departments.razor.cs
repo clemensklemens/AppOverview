@@ -13,7 +13,7 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await Service.GetAllDepartmentsAsync();
+            var data = await Service.GetDepartmentsAsync();
             _departments = data.ToList();
         }
 

@@ -29,24 +29,36 @@ namespace AppOverview.Data
             new EntityTypeDTO { Id = 3, Name = "Type 3", Description = "Type 3 Desc", ColorHex = "#0000FF", IsActive = false }
         };
 
-        public async Task AddDepartmentAsync(DepartmentDTO department)
+        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department)
         {
+            int maxId = _departments.Any() ? _departments.Max(d => d.Id) : 0;
+            department.Id = maxId + 1; // Assign a new ID
             _departments.Add(department);
+            return department;
         }
 
-        public async Task AddEntityAsync(EntityDTO entity)
+        public async Task<EntityDTO> AddEntityAsync(EntityDTO entity)
         {
+            int maxId = _entities.Any() ? _entities.Max(e => e.Id) : 0;
+            entity.Id = maxId + 1; // Assign a new ID            
             _entities.Add(entity);
+            return entity;
         }
 
-        public async Task AddEntityTypeAsync(EntityTypeDTO entityType)
+        public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType)
         {
+            int maxId = _entityTypes.Any() ? _entityTypes.Max(et => et.Id) : 0;
+            entityType.Id = maxId + 1; // Assign a new ID
             _entityTypes.Add(entityType);
+            return entityType;
         }
 
-        public async Task AddTechnologyAsync(TechnologyDTO technology)
+        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology)
         {
+            int maxId = _technologies.Any() ? _technologies.Max(t => t.Id) : 0;
+            technology.Id = maxId + 1; // Assign a new ID
             _technologies.Add(technology);
+            return technology;
         }
 
         public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync()
@@ -57,6 +69,16 @@ namespace AppOverview.Data
         public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync()
         {
             return _entities;
+        }
+
+        public async Task<EntityDTO> GetEntityAsync(int id)
+        {
+            var entity = _entities.FirstOrDefault(e => e.Id == id);
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"Entity with ID {id} not found.");
+            }
+            return entity;
         }
 
         public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync()

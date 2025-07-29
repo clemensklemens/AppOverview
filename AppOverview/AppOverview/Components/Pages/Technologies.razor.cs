@@ -13,7 +13,7 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {            
-            var data = await Service.GetAllTechnologiesAsync();
+            var data = await Service.GetTechnologiesAsync();
             _technologies = data.ToList();
         }
 

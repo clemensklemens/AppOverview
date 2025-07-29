@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NLog.Schema" Version="6.0.2" />
+  </ItemGroup>
+
 </Project>

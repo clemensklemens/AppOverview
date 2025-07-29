@@ -13,7 +13,7 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await Service.GetAllEntityTypesAsync();
+            var data = await Service.GetEntityTypesAsync();
             _entityTypes = data.ToList();
         }
 

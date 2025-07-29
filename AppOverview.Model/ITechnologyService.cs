@@ -3,8 +3,7 @@
     public interface ITechnologyService
     {
         Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology);
-        Task<TechnologyDTO> GetTechnologyAsync(int id);
-        Task<IEnumerable<TechnologyDTO>> GetAllTechnologiesAsync();
+        Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync();
         Task UpdateTechnologyAsync(TechnologyDTO technology);
     }
 }

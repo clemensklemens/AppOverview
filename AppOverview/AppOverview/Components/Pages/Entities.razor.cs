@@ -8,14 +8,20 @@ namespace AppOverview.Components.Pages
     public partial class Entities : ComponentBase
     {
         private List<EntityDTO>? _entities;
-        private EntityDTO _editEntity = new EntityDTO();
+        private EntityDTO _editEntity = new();
         private bool _showForm = false;
         private bool _isEdit = false;
+        private List<DepartmentDTO>? _departments;
+        private List<TechnologyDTO>? _technologies;
+        private List<EntityTypeDTO>? _entityTypes;
 
         protected override async Task OnInitializedAsync()
         {
-            var enityData = await Service.GetAllEntitiesAsync();
-            _entities = enityData.ToList();
+            _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
+            await Service.GetReferenceDataAsync();
+            _departments = (await Service.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
+            _technologies = (await Service.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
+            _entityTypes = (await Service.GetEntityTypesAsync()).OrderBy(x => x.Name).ToList();
         }
 
         private void ShowNewForm()
@@ -60,15 +66,6 @@ namespace AppOverview.Components.Pages
             }
             _showForm = false;
             StateHasChanged();
-        }
-
-        private EntityDTO FindNestedValues(EntityDTO dto)
-        {
-            dto.Department = _departments?.FirstOrDefault(d => d.Id == dto.DepartmentId)?.Name ?? string.Empty;
-            dto.Technology = _technologies?.FirstOrDefault(t => t.Id == dto.TechnologyId)?.Name ?? string.Empty;
-            dto.Type = _entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.Name ?? string.Empty;
-            dto.ColorHex = _entityTypes?.FirstOrDefault(et => et.Id == dto.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
-            return dto;
         }
     }
 }

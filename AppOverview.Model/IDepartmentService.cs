@@ -3,8 +3,7 @@
     public interface IDepartmentService
     {
         Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department);
-        Task<DepartmentDTO> GetDepartmentAsync(int id);
-        Task<IEnumerable<DepartmentDTO>> GetAllDepartmentsAsync();
+        Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync();
         Task UpdateDepartmentAsync(DepartmentDTO department);
     }
 }
