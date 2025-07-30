@@ -10,6 +10,7 @@ namespace AppOverview.Components.Pages
         private TechnologyDTO _editTechnology = new TechnologyDTO();
         private bool _showForm = false;
         private bool _isEdit = false;
+        protected bool _nameInvalid = false;
 
         protected override async Task OnInitializedAsync()
         {            
@@ -42,6 +43,15 @@ namespace AppOverview.Components.Pages
             {
                 return;
             }
+
+            // Validate name
+            if (string.IsNullOrWhiteSpace(_editTechnology.Name))
+            {
+                _nameInvalid = true;
+                StateHasChanged();
+                return;
+            }
+            _nameInvalid = false;
 
             if (_isEdit)
             {

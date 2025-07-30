@@ -31,7 +31,7 @@ namespace AppOverview.Service
         {
             try
             {                
-                return await _dataProvider.GetDepartmentsAsync();
+                return await _dataProvider.GetDepartmentsAsync(false);
             }
             catch(Exception ex)
             {

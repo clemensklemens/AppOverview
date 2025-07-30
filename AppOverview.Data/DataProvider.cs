@@ -61,14 +61,28 @@ namespace AppOverview.Data
             return technology;
         }
 
-        public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync()
+        public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync(bool activeOnly)
         {
-            return _departments;
+            if(activeOnly)
+            {
+                return _departments.Where(d => d.IsActive);
+            }
+            else
+            {
+                return _departments;
+            }                
         }
 
-        public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync()
+        public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync(bool activeOnly)
         {
-            return _entities;
+            if (activeOnly)
+            {
+                return _entities.Where(d => d.IsActive);
+            }
+            else
+            {
+                return _entities;
+            }
         }
 
         public async Task<EntityDTO> GetEntityAsync(int id)
@@ -81,14 +95,28 @@ namespace AppOverview.Data
             return entity;
         }
 
-        public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync()
+        public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync(bool activeOnly)
         {
-            return _entityTypes;
+            if (activeOnly)
+            {
+                return _entityTypes.Where(d => d.IsActive);
+            }
+            else
+            {
+                return _entityTypes;
+            }
         }
 
-        public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync()
+        public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync(bool activeOnly)
         {
-            return _technologies;
+            if (activeOnly)
+            {
+                return _technologies.Where(d => d.IsActive);
+            }
+            else
+            {
+                return _technologies;
+            }
         }
 
         public async Task UpdateDepartmentAsync(DepartmentDTO department)

@@ -8,27 +8,8 @@ namespace AppOverview.Service
     {
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<EntityService> _logger = logger;
-        private List<DepartmentDTO> _departments = new();
-        private List<TechnologyDTO> _technologies = new();
-        private List<EntityTypeDTO> _entityTypes = new();
 
         #region Public Methods
-
-        public async Task GetReferenceDataAsync()
-        {
-            try
-            {
-                _departments = (await _dataProvider.GetDepartmentsAsync()).ToList();
-                _technologies = (await _dataProvider.GetTechnologiesAsync()).ToList();
-                _entityTypes = (await _dataProvider.GetEntityTypesAsync()).ToList();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "An error occurred while loading refernce data.";
-                _logger.LogError("{ErrorMessage} Exception: {Exception}", errorMessage, ex);
-                throw new ServiceException(errorMessage);
-            }
-        }
 
         public async Task<EntityDTO> AddEntityAsync(EntityDTO entity)
         {
@@ -115,7 +96,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return await _dataProvider.GetEntitiesAsync();
+                return await _dataProvider.GetEntitiesAsync(false);
             }
             catch (Exception ex)
             {
@@ -129,11 +110,7 @@ namespace AppOverview.Service
         {
             try
             {
-                if (_departments is null || _departments.Count == 0)
-                {
-                    _departments = (await _dataProvider.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
-                }
-                return _departments;
+                return (await _dataProvider.GetDepartmentsAsync(true)).OrderBy(x => x.Name).ToList();
             }
             catch (Exception ex)
             {
@@ -147,11 +124,7 @@ namespace AppOverview.Service
         {
             try
             {
-                if (_technologies is null || _technologies.Count == 0)
-                {
-                    _technologies = (await _dataProvider.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
-                }
-                return _technologies;
+                return (await _dataProvider.GetTechnologiesAsync(true)).OrderBy(x => x.Name).ToList();
             }
             catch (Exception ex)
             {
@@ -165,11 +138,7 @@ namespace AppOverview.Service
         {
             try
             {
-                if (_entityTypes is null || _entityTypes.Count == 0)
-                {
-                    _entityTypes = (await _dataProvider.GetEntityTypesAsync()).OrderBy(x => x.Name).ToList();
-                }
-                return _entityTypes;
+                return (await _dataProvider.GetEntityTypesAsync(true)).OrderBy(x => x.Name).ToList();
             }
             catch (Exception ex)
             {

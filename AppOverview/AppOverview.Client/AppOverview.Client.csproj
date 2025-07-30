@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AppOverview.Data\AppOverview.Data.csproj" />
     <ProjectReference Include="..\..\AppOverview.Model\AppOverview.Model.csproj" />
+    <ProjectReference Include="..\..\AppOverview.Service\AppOverview.Service.csproj" />
   </ItemGroup>
 
 </Project>

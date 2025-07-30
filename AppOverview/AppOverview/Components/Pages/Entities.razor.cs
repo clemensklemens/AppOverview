@@ -15,10 +15,15 @@ namespace AppOverview.Components.Pages
         private List<TechnologyDTO>? _technologies;
         private List<EntityTypeDTO>? _entityTypes;
 
+        protected bool _nameInvalid = false;
+        protected bool _descriptionInvalid = false;
+        protected bool _departmentInvalid = false;
+        protected bool _entityTypeInvalid = false;
+        protected bool _technologyInvalid = false;
+
         protected override async Task OnInitializedAsync()
         {
             _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
-            await Service.GetReferenceDataAsync();
             _departments = (await Service.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
             _technologies = (await Service.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
             _entityTypes = (await Service.GetEntityTypesAsync()).OrderBy(x => x.Name).ToList();
@@ -47,6 +52,19 @@ namespace AppOverview.Components.Pages
         {
             if (_entities == null)
             {
+                return;
+            }
+
+            // Validate required fields
+            _nameInvalid = string.IsNullOrWhiteSpace(_editEntity.Name);
+            _descriptionInvalid = string.IsNullOrWhiteSpace(_editEntity.Description);
+            _departmentInvalid = _editEntity.DepartmentId == 0;
+            _entityTypeInvalid = _editEntity.TypeId == 0;
+            _technologyInvalid = _editEntity.TechnologyId == 0;
+
+            if (_nameInvalid || _descriptionInvalid || _departmentInvalid || _entityTypeInvalid || _technologyInvalid)
+            {
+                StateHasChanged();
                 return;
             }
 

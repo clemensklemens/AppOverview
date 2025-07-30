@@ -2,10 +2,10 @@
 {
     public interface IDataProvider
     {
-        Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync();
-        Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync();        
-        Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync();
-        Task<IEnumerable<EntityDTO>> GetEntitiesAsync();
+        Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync(bool activeOnly);
+        Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync(bool activeOnly);        
+        Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync(bool activeOnly);
+        Task<IEnumerable<EntityDTO>> GetEntitiesAsync(bool activeOnly);
         Task<EntityDTO> GetEntityAsync(int id);
         Task UpdateTechnologyAsync(TechnologyDTO technology);
         Task UpdateDepartmentAsync(DepartmentDTO department);

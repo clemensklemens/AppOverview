@@ -15,7 +15,11 @@
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="_editEntity.Name" />
+            <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.Name" />
+            @if (_nameInvalid)
+            {
+                <div class="invalid-feedback">Name is required.</div>
+            }
         </div>
         <div class="mb-2">
             <label>Description:</label>
@@ -23,7 +27,7 @@
         </div>
         <div class="mb-2">
             <label>Type:</label>
-            <InputSelect class="form-control" @bind-Value="_editEntity.TypeId">
+            <InputSelect class="@( _entityTypeInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TypeId">
                 <option value="">Select Type</option>
                 @if (_entityTypes != null)
                 {
@@ -33,10 +37,14 @@
                     }
                 }
             </InputSelect>
+            @if (_entityTypeInvalid)
+            {
+                <div class="invalid-feedback">Type is required.</div>
+            }
         </div>
         <div class="mb-2">
             <label>Department:</label>
-            <InputSelect class="form-control" @bind-Value="_editEntity.DepartmentId">
+            <InputSelect class="@( _departmentInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.DepartmentId">
                 <option value="">Select department</option>
                 @if (_departments != null)
                 {
@@ -46,10 +54,14 @@
                     }
                 }
             </InputSelect>
+            @if (_departmentInvalid)
+            {
+                <div class="invalid-feedback">Department is required.</div>
+            }
         </div>
         <div class="mb-2">
             <label>Technology:</label>
-            <InputSelect class="form-control" @bind-Value="_editEntity.TechnologyId">
+            <InputSelect class="@( _technologyInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TechnologyId">
                 <option value="">Select technology</option>
                 @if (_technologies != null)
                 {
@@ -59,6 +71,10 @@
                     }
                 }
             </InputSelect>
+            @if (_technologyInvalid)
+            {
+                <div class="invalid-feedback">Technology is required.</div>
+            }
         </div>
         <div class="mb-2">
             <label>Active:</label>

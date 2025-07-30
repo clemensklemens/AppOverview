@@ -6,7 +6,6 @@
         Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync();
         Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync();
         Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync();
-        Task GetReferenceDataAsync();
         Task<EntityDTO> AddEntityAsync(EntityDTO entity);
         Task UpdateEntityAsync(EntityDTO entity);
         Task<EntityDTO> AddRelatedEntityAsync(int entityId, int relatedEntityId);

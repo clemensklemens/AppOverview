@@ -30,7 +30,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetEntityTypesAsync());
+                return (await _dataProvider.GetEntityTypesAsync(false));
             }
             catch(Exception ex)
             {

@@ -31,7 +31,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return await _dataProvider.GetTechnologiesAsync();
+                return await _dataProvider.GetTechnologiesAsync(false);
             }
             catch (Exception ex)
             {

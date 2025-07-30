@@ -15,7 +15,11 @@
         <DataAnnotationsValidator />
         <div class="mb-2">
             <label>Name:</label>
-            <InputText class="form-control" @bind-Value="_editTechnology.Name" />
+            <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editTechnology.Name" />
+            @if (_nameInvalid)
+            {
+                <div class="invalid-feedback">Name is required.</div>
+            }
         </div>
         <div class="mb-2">
             <label>Description:</label>
