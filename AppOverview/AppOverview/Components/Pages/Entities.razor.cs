@@ -85,5 +85,75 @@ namespace AppOverview.Components.Pages
             _showForm = false;
             StateHasChanged();
         }
+
+        private bool _showDependenciesEditor = false;
+        private EntityDTO? _editingDependenciesEntity = null;
+        private string _dependencySearchText = string.Empty;
+        private List<EntityDTO> _dependencyCandidates = new();
+
+        private void ShowEditDependencies(EntityDTO entity)
+        {
+            _editingDependenciesEntity = entity;
+            _showDependenciesEditor = true;
+            _dependencySearchText = string.Empty;
+            UpdateDependencyCandidates();
+        }
+
+        private void HideEditDependencies()
+        {
+            _showDependenciesEditor = false;
+            _editingDependenciesEntity = null;
+            _dependencySearchText = string.Empty;
+            _dependencyCandidates.Clear();
+        }
+
+        private void UpdateDependencyCandidates()
+        {
+            if (_entities == null || _editingDependenciesEntity == null)
+            {
+                _dependencyCandidates = new();
+                return;
+            }
+            var excludeIds = _editingDependenciesEntity.Dependencies.Select(d => d.Id).Append(_editingDependenciesEntity.Id).ToHashSet();
+            _dependencyCandidates = _entities
+                .Where(e => !excludeIds.Contains(e.Id) && (string.IsNullOrWhiteSpace(_dependencySearchText) || e.Name.Contains(_dependencySearchText, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+        }
+
+        private async Task AddDependency(EntityDTO dep)
+        {
+            if (_editingDependenciesEntity == null)
+            {
+                return;
+            }
+            
+            await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
+            _editingDependenciesEntity.Dependencies.Add(dep);
+            UpdateDependencyCandidates();
+            StateHasChanged();
+        }
+
+        private async Task RemoveDependency(EntityDTO dep)
+        {
+            if (_editingDependenciesEntity == null) return;
+            await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
+            _editingDependenciesEntity.Dependencies.RemoveAll(d => d.Id == dep.Id);
+            UpdateDependencyCandidates();
+            StateHasChanged();
+        }
+
+        private string DependencySearchText
+        {
+            get => _dependencySearchText;
+            set
+            {
+                if (_dependencySearchText != value)
+                {
+                    _dependencySearchText = value;
+                    UpdateDependencyCandidates();
+                    StateHasChanged();
+                }
+            }
+        }
     }
 }
