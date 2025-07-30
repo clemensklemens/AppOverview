@@ -13,7 +13,7 @@
         public string Technology { get; set; } = string.Empty;
         public string ColorHex { get; set; } = "#000000";
         public bool IsActive { get; set; } = true;        
-        public List<EntityDTO> Dependencies { get; set; } = []; //maybe also needs relation type
+        public List<EntityDTO> Dependencies { get; set; } = new List<EntityDTO>(); //maybe also needs relation type
 
         public EntityDTO() { }
     }

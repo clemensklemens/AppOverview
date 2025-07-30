@@ -15,5 +15,9 @@
         Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department);
         Task<EntityDTO> AddEntityAsync(EntityDTO entity);
         Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType);
+        Task<IEnumerable<IdNameDTO>> GetEntitiesIdNameListAsync(bool activeOnly);
+        Task<IEnumerable<IdNameDTO>> GetEntityTypeIdNameListAsync(bool activeOnly);
+        Task<IEnumerable<IdNameDTO>> GetTechnologiesIdNameListAsync(bool activeOnly);
+        Task<IEnumerable<IdNameDTO>> GetDepartmentsIdNameListAsync(bool activeOnly);
     }
 }

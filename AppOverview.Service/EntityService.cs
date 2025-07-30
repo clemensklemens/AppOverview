@@ -106,11 +106,11 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync()
+        public async Task<IEnumerable<IdNameDTO>> GetDepartmentsAsync()
         {
             try
             {
-                return (await _dataProvider.GetDepartmentsAsync(true)).OrderBy(x => x.Name).ToList();
+                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
             }
             catch (Exception ex)
             {
@@ -120,11 +120,11 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync()
+        public async Task<IEnumerable<IdNameDTO>> GetTechnologiesAsync()
         {
             try
             {
-                return (await _dataProvider.GetTechnologiesAsync(true)).OrderBy(x => x.Name).ToList();
+                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
             }
             catch (Exception ex)
             {
@@ -134,11 +134,11 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync()
+        public async Task<IEnumerable<IdNameDTO>> GetEntityTypesAsync()
         {
             try
             {
-                return (await _dataProvider.GetEntityTypesAsync(true)).OrderBy(x => x.Name).ToList();
+                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
             }
             catch (Exception ex)
             {

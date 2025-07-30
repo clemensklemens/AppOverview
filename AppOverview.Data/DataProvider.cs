@@ -73,6 +73,18 @@ namespace AppOverview.Data
             }                
         }
 
+        public async Task<IEnumerable<IdNameDTO>> GetDepartmentsIdNameListAsync(bool activeOnly)
+        {
+            if (activeOnly)
+            {
+                return _departments.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+            else
+            {                
+                return _departments.Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+        }
+
         public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync(bool activeOnly)
         {
             if (activeOnly)
@@ -82,6 +94,18 @@ namespace AppOverview.Data
             else
             {
                 return _entities;
+            }
+        }
+
+        public async Task<IEnumerable<IdNameDTO>> GetEntitiesIdNameListAsync(bool activeOnly)
+        {
+            if (activeOnly)
+            {
+                return _entities.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+            else
+            {
+                return _entities.Select(d => new IdNameDTO(d.Id, d.Name));
             }
         }
 
@@ -107,6 +131,18 @@ namespace AppOverview.Data
             }
         }
 
+        public async Task<IEnumerable<IdNameDTO>> GetEntityTypeIdNameListAsync(bool activeOnly)
+        {
+            if (activeOnly)
+            {
+                return _entityTypes.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+            else
+            {
+                return _entityTypes.Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+        }
+
         public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync(bool activeOnly)
         {
             if (activeOnly)
@@ -116,6 +152,18 @@ namespace AppOverview.Data
             else
             {
                 return _technologies;
+            }
+        }
+
+        public async Task<IEnumerable<IdNameDTO>> GetTechnologiesIdNameListAsync(bool activeOnly)
+        {
+            if (activeOnly)
+            {
+                return _technologies.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
+            }
+            else
+            {
+                return _technologies.Select(d => new IdNameDTO(d.Id, d.Name));
             }
         }
 

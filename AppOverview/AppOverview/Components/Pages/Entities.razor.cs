@@ -8,12 +8,12 @@ namespace AppOverview.Components.Pages
     public partial class Entities : ComponentBase
     {
         private List<EntityDTO>? _entities;
-        private EntityDTO _editEntity = new();
+        private EntityDTO _editEntity = new EntityDTO();
         private bool _showForm = false;
         private bool _isEdit = false;
-        private List<DepartmentDTO>? _departments;
-        private List<TechnologyDTO>? _technologies;
-        private List<EntityTypeDTO>? _entityTypes;
+        private List<IdNameDTO>? _departments;
+        private List<IdNameDTO>? _technologies;
+        private List<IdNameDTO>? _entityTypes;
 
         protected bool _nameInvalid = false;
         protected bool _descriptionInvalid = false;
