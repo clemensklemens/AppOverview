@@ -82,6 +82,12 @@ namespace AppOverview.Service
         {
             try
             {
+                if (!IsValidEntity(entity))
+                {
+                    string errorMessage = "Invalid entity data provided.";
+                    _logger.LogError("{ErrorMessage}", errorMessage);
+                    throw new ArgumentException(errorMessage);
+                }
                 await _dataProvider.UpdateEntityAsync(entity);
             }
             catch (Exception ex)
@@ -124,7 +130,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
+                return (await _dataProvider.GetTechnologiesIdNameListAsync(true)).ToList();
             }
             catch (Exception ex)
             {
@@ -138,7 +144,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
+                return (await _dataProvider.GetEntityTypeIdNameListAsync(true)).ToList();
             }
             catch (Exception ex)
             {

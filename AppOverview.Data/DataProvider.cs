@@ -40,7 +40,9 @@ namespace AppOverview.Data
         public async Task<EntityDTO> AddEntityAsync(EntityDTO entity)
         {
             int maxId = _entities.Any() ? _entities.Max(e => e.Id) : 0;
-            entity.Id = maxId + 1; // Assign a new ID            
+            entity.Id = maxId + 1; // Assign a new ID
+            string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
+            entity.ColorHex = color;
             _entities.Add(entity);
             return entity;
         }
@@ -183,6 +185,8 @@ namespace AppOverview.Data
 
         public async Task UpdateEntityAsync(EntityDTO entity)
         {
+            string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
+            entity.ColorHex = color;
             var existingEntity = _entities.FirstOrDefault(e => e.Id == entity.Id);
             if (existingEntity != null)
             {
