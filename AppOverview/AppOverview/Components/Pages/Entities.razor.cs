@@ -7,19 +7,39 @@ namespace AppOverview.Components.Pages
 {
     public partial class Entities : ComponentBase
     {
-        private List<EntityDTO>? _entities;
-        private EntityDTO _editEntity = new EntityDTO();
+        private bool _nameInvalid = false;
+        private bool _descriptionInvalid = false;
+        private bool _departmentInvalid = false;
+        private bool _entityTypeInvalid = false;
+        private bool _technologyInvalid = false;
         private bool _showForm = false;
         private bool _isEdit = false;
+        private bool _showDependenciesEditor = false;
+
+        private List<EntityDTO>? _entities;
         private List<IdNameDTO>? _departments;
         private List<IdNameDTO>? _technologies;
         private List<IdNameDTO>? _entityTypes;
 
-        protected bool _nameInvalid = false;
-        protected bool _descriptionInvalid = false;
-        protected bool _departmentInvalid = false;
-        protected bool _entityTypeInvalid = false;
-        protected bool _technologyInvalid = false;
+        private EntityDTO _editEntity = new EntityDTO();
+        private EntityDTO? _editingDependenciesEntity = null;
+
+        private string _dependencySearchText = string.Empty;
+        private List<EntityDTO> _dependencyCandidates = new();
+
+        private string DependencySearchText
+        {
+            get => _dependencySearchText;
+            set
+            {
+                if (_dependencySearchText != value)
+                {
+                    _dependencySearchText = value;
+                    UpdateDependencyCandidates();
+                    StateHasChanged();
+                }
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -86,11 +106,6 @@ namespace AppOverview.Components.Pages
             StateHasChanged();
         }
 
-        private bool _showDependenciesEditor = false;
-        private EntityDTO? _editingDependenciesEntity = null;
-        private string _dependencySearchText = string.Empty;
-        private List<EntityDTO> _dependencyCandidates = new();
-
         private void ShowEditDependencies(EntityDTO entity)
         {
             _editingDependenciesEntity = entity;
@@ -126,34 +141,22 @@ namespace AppOverview.Components.Pages
             {
                 return;
             }
-            
-            await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
-            _editingDependenciesEntity.Dependencies.Add(dep);
+
+            _editingDependenciesEntity = await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);            
             UpdateDependencyCandidates();
             StateHasChanged();
         }
 
         private async Task RemoveDependency(EntityDTO dep)
         {
-            if (_editingDependenciesEntity == null) return;
-            await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
-            _editingDependenciesEntity.Dependencies.RemoveAll(d => d.Id == dep.Id);
+            if (_editingDependenciesEntity == null)
+            {
+                return;
+            }
+            
+            _editingDependenciesEntity = await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
             UpdateDependencyCandidates();
             StateHasChanged();
-        }
-
-        private string DependencySearchText
-        {
-            get => _dependencySearchText;
-            set
-            {
-                if (_dependencySearchText != value)
-                {
-                    _dependencySearchText = value;
-                    UpdateDependencyCandidates();
-                    StateHasChanged();
-                }
-            }
         }
     }
 }
