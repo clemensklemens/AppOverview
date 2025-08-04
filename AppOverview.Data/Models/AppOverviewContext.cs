@@ -64,6 +64,7 @@ public partial class AppOverviewContext : DbContext
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
             entity.Property(e => e.EntityTypeId).HasColumnName("EntityTypeID");
             entity.Property(e => e.SourceControlUrl).HasColumnName("SourceControlURL");
+            entity.Property(e => e.SourceControlUrl).HasColumnName("Owner");
             entity.Property(e => e.TechnologyId).HasColumnName("TechnologyID");
 
             entity.HasOne(d => d.Department).WithMany(p => p.Entities)

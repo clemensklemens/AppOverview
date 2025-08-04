@@ -13,6 +13,8 @@ public partial class Entity
 
     public string? SourceControlUrl { get; set; }
 
+    public string? Owner { get; set; }
+
     public int EntityTypeId { get; set; }
 
     public int DepartmentId { get; set; }

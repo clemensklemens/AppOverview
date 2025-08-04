@@ -11,6 +11,8 @@
         public string Department { get; set; } = string.Empty;        
         public int TechnologyId { get; set; } = 0;
         public string Technology { get; set; } = string.Empty;
+        public string SourceControlUrl { get; set; } = string.Empty;
+        public string Owner { get; set; } = string.Empty;
         public string ColorHex { get; set; } = "#000000";
         public bool IsActive { get; set; } = true;        
         public List<EntityDTO> Dependencies { get; set; } = new List<EntityDTO>(); //maybe also needs relation type

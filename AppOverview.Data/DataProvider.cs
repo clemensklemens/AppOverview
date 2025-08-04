@@ -18,9 +18,9 @@ namespace AppOverview.Data
         };
         private static List<EntityDTO> _entities = new List<EntityDTO>()
         {            
-            new EntityDTO { Id = 1, Name = "Entity Alpha", Description = "First test entity", TypeId = 1, Type = "Type 1", DepartmentId = 1, Department = "HR", TechnologyId = 1, Technology = ".NET", ColorHex = "#FF0000", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 2, Name = "Entity Beta", Description = "Second test entity", TypeId = 2, Type = "Type 2", DepartmentId = 2, Department = "IT", TechnologyId = 2, Technology = "JavaScript", ColorHex = "#00FF00", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 3, Name = "Entity Gamma", Description = "Third test entity", TypeId = 3, Type = "Type 3", DepartmentId = 3, Department = "Finance", TechnologyId = 3, Technology = "Python", ColorHex = "#0000FF", IsActive = false, Dependencies = new List<EntityDTO>() }
+            new EntityDTO { Id = 1, Name = "Entity Alpha", Description = "First test entity", Owner = "John Doe", SourceControlUrl = "www.123.com", TypeId = 1, Type = "Type 1", DepartmentId = 1, Department = "HR", TechnologyId = 1, Technology = ".NET", ColorHex = "#FF0000", IsActive = true, Dependencies = new List<EntityDTO>() },
+            new EntityDTO { Id = 2, Name = "Entity Beta", Description = "Second test entity", Owner = "Jane Doe", SourceControlUrl = string.Empty, TypeId = 2, Type = "Type 2", DepartmentId = 2, Department = "IT", TechnologyId = 2, Technology = "JavaScript", ColorHex = "#00FF00", IsActive = true, Dependencies = new List<EntityDTO>() },
+            new EntityDTO { Id = 3, Name = "Entity Gamma", Description = "Third test entity", Owner = "Jane Doe", SourceControlUrl = "https://github.com/clemensklemens/AppOverview/tree/main", TypeId = 3, Type = "Type 3", DepartmentId = 3, Department = "Finance", TechnologyId = 3, Technology = "Python", ColorHex = "#0000FF", IsActive = false, Dependencies = new List<EntityDTO>() }
         };
         private static List<EntityTypeDTO> _entityTypes = new List<EntityTypeDTO>()
         {
@@ -188,6 +188,8 @@ namespace AppOverview.Data
             {
                 existingEntity.Name = entity.Name;
                 existingEntity.Description = entity.Description;
+                existingEntity.SourceControlUrl = entity.SourceControlUrl;
+                existingEntity.Owner = entity.Owner;
                 existingEntity.TypeId = entity.TypeId;
                 existingEntity.Type = entity.Type;
                 existingEntity.DepartmentId = entity.DepartmentId;

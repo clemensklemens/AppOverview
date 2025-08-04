@@ -60,6 +60,10 @@
             }
         </div>
         <div class="mb-2">
+            <label>Owner:</label>
+            <InputText class="form-control" @bind-Value="_editEntity.Owner" />
+        </div>
+        <div class="mb-2">
             <label>Technology:</label>
             <InputSelect class="@( _technologyInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TechnologyId">
                 <option value="">Select technology</option>
@@ -75,6 +79,10 @@
             {
                 <div class="invalid-feedback">Technology is required.</div>
             }
+        </div>
+        <div class="mb-2">
+            <label>Source Control URL:</label>
+            <InputText class="form-control" @bind-Value="_editEntity.SourceControlUrl" />
         </div>
         <div class="mb-2">
             <label>Active:</label>
@@ -95,10 +103,12 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Description</th>
+                <th>Description</th>                              
                 <th>Type</th>
                 <th>Department</th>
+                <th>Owner</th>
                 <th>Technology</th>
+                <th>Source Control URL</th>
                 <th>Color</th>
                 <th>Active</th>
                 <th></th>
@@ -109,10 +119,12 @@ else
             {
                 <tr @key="entity.Id">
                     <td>@entity.Name</td>
-                    <td>@entity.Description</td>
+                    <td>@entity.Description</td>                                      
                     <td>@entity.Type</td>
                     <td>@entity.Department</td>
+                    <td>@entity.Owner</td>
                     <td>@entity.Technology</td>
+                    <td>@entity.SourceControlUrl</td>
                     <td><span style="color:@entity.ColorHex">@entity.ColorHex</span></td>
                     <td>
                         <input type="checkbox" checked="@entity.IsActive" disabled />
