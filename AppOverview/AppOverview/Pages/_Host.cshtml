@@ -1,0 +1,23 @@
+@page "/"
+@namespace AppOverview.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppOverview</title>
+    <base href="~/" />
+    <link href="~/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/app.css" rel="stylesheet" />
+    <!-- vis-network CSS -->
+    <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet" />
+</head>
+<body>
+    <component type="typeof(AppOverview.Components.App)" render-mode="ServerPrerendered" />
+    <!-- vis-network JS -->
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="~/js/entityGraph.js"></script>
+</body>
+</html>

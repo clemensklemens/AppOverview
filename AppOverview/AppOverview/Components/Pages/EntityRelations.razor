@@ -1,0 +1,95 @@
+﻿@page "/entity-relations"
+@using AppOverview.Model
+@inject IEntityService Service
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Entity Relations</PageTitle>
+
+<h1>Entity Relations</h1>
+
+<input class="form-control mb-3" placeholder="Filter entities..." @bind-value="FilterText" @bind-value:event="oninput" />
+
+<div id="entity-graph" style="height: 600px; border: 1px solid #ccc; margin-bottom: 2rem;"></div>
+
+@if (_entities == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private List<EntityDTO>? _entities;
+    private List<EntityDTO>? _filteredEntities;
+    private string _filterText = string.Empty;
+    private string FilterText
+    {
+        get => _filterText;
+        set
+        {
+            if (_filterText != value)
+            {
+                _filterText = value;
+                FilterEntities();
+                StateHasChanged(); // This will trigger OnAfterRenderAsync
+            }
+        }
+    }
+    private HashSet<int> _expanded = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
+        FilterEntities();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_entities != null)
+        {
+            await RenderGraphAsync();
+        }
+    }
+
+    private void FilterEntities()
+    {
+        if (string.IsNullOrWhiteSpace(_filterText))
+            _filteredEntities = _entities;
+        else
+            _filteredEntities = _entities.Where(e => e.Name.Contains(_filterText, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    private void ToggleExpand(int entityId)
+    {
+        if (_expanded.Contains(entityId))
+            _expanded.Remove(entityId);
+        else
+            _expanded.Add(entityId);
+    }
+
+    private async Task RenderGraphAsync()
+    {
+        if (_filteredEntities == null) return;
+
+        var nodes = _filteredEntities
+            .Select(e => new { id = e.Id, label = e.Name })
+            .ToList();
+
+        var edges = new List<object>();
+        foreach (var entity in _filteredEntities)
+        {
+            if (entity.Dependencies != null)
+            {
+                foreach (var dep in entity.Dependencies)
+                {
+                    // Only show edges to dependencies that are also in the filtered list
+                    if (_filteredEntities.Any(f => f.Id == dep.Id))
+                    {
+                        edges.Add(new { from = entity.Id, to = dep.Id });
+                    }
+                }
+            }
+        }
+
+        await JS.InvokeVoidAsync("entityGraph.render", "entity-graph", nodes, edges);
+    }
+}
