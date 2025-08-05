@@ -61,3 +61,8 @@ nunit-*.xml
 
 # GitHub workflow
 .github/
+AppOverview/AppOverview/NLog.xsd
+AppOverview/AppOverview.Client/NLog.xsd
+AppOverview.Data/NLog.xsd
+AppOverview.Model/NLog.xsd
+AppOverview.Service/NLog.xsd
