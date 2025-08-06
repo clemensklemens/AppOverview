@@ -1,5 +1,5 @@
 // Code-behind for EntityRelations.razor
-using AppOverview.Model;
+using AppOverview.Model.DTOs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

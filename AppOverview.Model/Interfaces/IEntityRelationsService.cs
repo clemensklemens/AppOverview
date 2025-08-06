@@ -1,4 +1,7 @@
-﻿namespace AppOverview.Model
+﻿using AppOverview.Model.DTOs;
+using AppOverview.Model.GraphModel;
+
+namespace AppOverview.Model.Interfaces
 {
     public interface IEntityRelationsService
     {

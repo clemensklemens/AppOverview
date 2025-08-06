@@ -1,4 +1,5 @@
-﻿using AppOverview.Model;
+﻿using AppOverview.Model.DTOs;
+using AppOverview.Model.Interfaces;
 
 namespace AppOverview.Data
 {

@@ -1,4 +1,4 @@
-﻿namespace AppOverview.Model
+﻿namespace AppOverview.Model.DTOs
 {
     public class EntityDTO
     {        

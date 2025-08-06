@@ -1,4 +1,6 @@
 ﻿using AppOverview.Model;
+using AppOverview.Model.DTOs;
+using AppOverview.Model.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace AppOverview.Service

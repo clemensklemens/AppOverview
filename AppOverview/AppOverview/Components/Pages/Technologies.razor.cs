@@ -1,5 +1,5 @@
 // Code-behind for Technologies.razor
-using AppOverview.Model;
+using AppOverview.Model.DTOs;
 using Microsoft.AspNetCore.Components;
 
 namespace AppOverview.Components.Pages

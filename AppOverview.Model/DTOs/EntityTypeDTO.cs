@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AppOverview.Model
+namespace AppOverview.Model.DTOs
 {
     public class EntityTypeDTO
     {                

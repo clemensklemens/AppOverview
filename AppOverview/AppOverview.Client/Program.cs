@@ -1,6 +1,6 @@
 using AppOverview.Client;
 using AppOverview.Data;
-using AppOverview.Model;
+using AppOverview.Model.Interfaces;
 using AppOverview.Service;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

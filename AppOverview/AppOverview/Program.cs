@@ -2,7 +2,7 @@ using AppOverview.Client.Pages;
 using AppOverview.Components;
 using AppOverview.Components.Account;
 using AppOverview.Data;
-using AppOverview.Model;
+using AppOverview.Model.Interfaces;
 using AppOverview.Service;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;

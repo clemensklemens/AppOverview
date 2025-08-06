@@ -1,4 +1,6 @@
-﻿namespace AppOverview.Model
+﻿using AppOverview.Model.DTOs;
+
+namespace AppOverview.Model.Interfaces
 {
     public interface IDepartmentService
     {
