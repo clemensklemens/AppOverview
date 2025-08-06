@@ -25,6 +25,7 @@ namespace AppOverview.Client
             builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
             builder.Services.AddSingleton<IEntityService, EntityService>();
             builder.Services.AddSingleton<IEntityTypeService, EntityTypeService>();
+            builder.Services.AddSingleton<IEntityRelationsService, EntityRelationsService>();
 
             await builder.Build().RunAsync();
         }

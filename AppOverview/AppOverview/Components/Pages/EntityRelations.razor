@@ -1,7 +1,5 @@
 ﻿@page "/entity-relations"
-@inject IEntityService Service
-@inject IEntityTypeService EntityTypeService
-@inject IDepartmentService DepartmentService
+@inject IEntityRelationsService Service
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 
@@ -22,7 +20,7 @@
                 {
                     <div>
                         <strong>Filter by Type:</strong>
-                        @if (_allTypes != null)
+                        @if (_allTypes is not null)
                         {
                             @foreach (var type in _allTypes)
                             {
@@ -44,7 +42,7 @@
                 {
                     <div>
                         <strong>Filter by Department:</strong>
-                        @if (_allDepartments != null)
+                        @if (_allDepartments is not null)
                         {
                             @foreach (var dept in _allDepartments)
                             {
@@ -63,7 +61,7 @@
     </div>
 </div>
 
-@if (_entities == null)
+@if (_allTypes is null || _allDepartments is null) 
 {
     <p><em>Loading...</em></p>
 }

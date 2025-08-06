@@ -42,7 +42,12 @@ namespace AppOverview.Data
             int maxId = _entities.Any() ? _entities.Max(e => e.Id) : 0;
             entity.Id = maxId + 1; // Assign a new ID
             string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
+            string type = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.Name ?? "Unknown Type";
+            string department = _departments.FirstOrDefault(d => d.Id == entity.DepartmentId)?.Name ?? "Unknown Department";
+
             entity.ColorHex = color;
+            entity.Type = type;
+            entity.Department = department;
             _entities.Add(entity);
             return entity;
         }

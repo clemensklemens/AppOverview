@@ -61,6 +61,7 @@ namespace AppOverview
                 builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
                 builder.Services.AddSingleton<IEntityService, EntityService>();
                 builder.Services.AddSingleton<IEntityTypeService, EntityTypeService>();
+                builder.Services.AddSingleton<IEntityRelationsService, EntityRelationsService>();
 
                 var app = builder.Build();
 
