@@ -12,7 +12,6 @@
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.2" />
     <ProjectReference Include="..\..\AppOverview.Model\AppOverview.Model.csproj" />
     <ProjectReference Include="..\..\AppOverview.Service\AppOverview.Service.csproj" />
-    <ProjectReference Include="..\AppOverview.Client\AppOverview.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.17" />
@@ -22,6 +21,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NLog.Schema" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AppOverview.Data\AppOverview.Data.csproj" />
   </ItemGroup>
 
 </Project>

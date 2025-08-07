@@ -22,8 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppOverview", "AppOverview\
 		{DECDC3B9-FE69-498F-BC7C-C324AB31B33A} = {DECDC3B9-FE69-498F-BC7C-C324AB31B33A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppOverview.Client", "AppOverview\AppOverview.Client\AppOverview.Client.csproj", "{953BFFB0-CEB6-4697-9737-2E0351F81C26}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,18 +80,6 @@ Global
 		{8943978B-DED8-4031-86D3-9AB1B8021625}.Release|x64.Build.0 = Release|Any CPU
 		{8943978B-DED8-4031-86D3-9AB1B8021625}.Release|x86.ActiveCfg = Release|Any CPU
 		{8943978B-DED8-4031-86D3-9AB1B8021625}.Release|x86.Build.0 = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|x64.Build.0 = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Debug|x86.Build.0 = Debug|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|x64.ActiveCfg = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|x64.Build.0 = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|x86.ActiveCfg = Release|Any CPU
-		{953BFFB0-CEB6-4697-9737-2E0351F81C26}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
