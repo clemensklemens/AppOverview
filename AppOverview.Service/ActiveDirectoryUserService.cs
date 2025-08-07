@@ -11,11 +11,7 @@ namespace AppOverview.Service
         public User GetUserWithAdminStatus(string username)
         {
             using var context = new PrincipalContext(ContextType.Domain);
-            using var userPrincipal = UserPrincipal.FindByIdentity(context, username);
-            if (userPrincipal == null)
-            {
-                throw new Exception($"User '{username}' not found in Active Directory.");
-            }
+            using var userPrincipal = UserPrincipal.FindByIdentity(context, username) ?? throw new ServiceException($"User '{username}' not found in Active Directory.");
 
             bool isAdmin = false;
             var group = GroupPrincipal.FindByIdentity(context, _adGroupName);
