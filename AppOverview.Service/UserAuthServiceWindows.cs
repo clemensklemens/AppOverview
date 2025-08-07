@@ -4,14 +4,15 @@ using System.DirectoryServices.AccountManagement;
 
 namespace AppOverview.Service
 {
-    public class ActiveDirectoryUserService : IActiveDirectoryUserService
+    public class UserAuthServiceWindows : IUserAuthService
     {
         private readonly string _adGroupName = "testgroup";
 
-        public User GetUserWithAdminStatus(string username)
+        public User GetUserNameAndPermissions()
         {
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             using var context = new PrincipalContext(ContextType.Domain);
-            using var userPrincipal = UserPrincipal.FindByIdentity(context, username) ?? throw new ServiceException($"User '{username}' not found in Active Directory.");
+            using var userPrincipal = UserPrincipal.FindByIdentity(context, userName) ?? throw new ServiceException($"User '{userName}' not found in Active Directory.");
 
             bool isAdmin = false;
             var group = GroupPrincipal.FindByIdentity(context, _adGroupName);

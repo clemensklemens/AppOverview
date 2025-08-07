@@ -1,4 +1,5 @@
 // Code-behind for Departments.razor
+using AppOverview.Model;
 using AppOverview.Model.DTOs;
 using Microsoft.AspNetCore.Components;
 
@@ -10,12 +11,14 @@ namespace AppOverview.Components.Pages
         private DepartmentDTO _editDepartment = new DepartmentDTO();
         private bool _showForm = false;
         private bool _isEdit = false;
-        protected bool _nameInvalid = false;
+        private bool _nameInvalid = false;
+        private User? _currentUser;
 
         protected override async Task OnInitializedAsync()
         {
             var data = await Service.GetDepartmentsAsync();
             _departments = data.ToList();
+            _currentUser = UserService.GetUserNameAndPermissions();
         }
 
         private void ShowNewForm()

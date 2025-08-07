@@ -36,6 +36,19 @@ namespace AppOverview
                 builder.Services.AddSingleton<IEntityService, EntityService>();
                 builder.Services.AddSingleton<IEntityTypeService, EntityTypeService>();
                 builder.Services.AddSingleton<IEntityRelationsService, EntityRelationsService>();
+                if (OperatingSystem.IsWindows())
+                {
+                    builder.Services.AddSingleton<IUserAuthService, UserAuthServiceWindows>();
+                }
+                else if (OperatingSystem.IsLinux())
+                {
+                    builder.Services.AddSingleton<IUserAuthService, UserAuthServiceWindowsLinux>();
+                }
+                else
+                {
+                    throw new PlatformNotSupportedException("Unsupported operating system for user authentication.");
+                }
+
 
                 var app = builder.Build();
 
