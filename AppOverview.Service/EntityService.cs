@@ -13,17 +13,18 @@ namespace AppOverview.Service
 
         #region Public Methods
 
-        public async Task<EntityDTO> AddEntityAsync(EntityDTO entity)
+        public async Task<EntityDTO> AddEntityAsync(EntityDTO entity, string userName)
         {
+            if (!IsValidEntity(entity))
+            {
+                string errorMessage = "Invalid entity data provided.";
+                _logger.LogError("{ErrorMessage}", errorMessage);
+                throw new ArgumentException(errorMessage);
+            }
+
             try
             {
-                if(!IsValidEntity(entity))
-                {
-                    string errorMessage = "Invalid entity data provided.";
-                    _logger.LogError("{ErrorMessage}", errorMessage);
-                    throw new ArgumentException(errorMessage);
-                }
-                var newEntity = await _dataProvider.AddEntityAsync(entity);
+                var newEntity = await _dataProvider.AddEntityAsync(entity, userName);
                 return newEntity;
             }
             catch (Exception ex)
@@ -34,7 +35,7 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<EntityDTO> AddRelatedEntityAsync(int entityId, int relatedEntityId)
+        public async Task<EntityDTO> AddRelatedEntityAsync(int entityId, int relatedEntityId, string userName)
         {
             try
             {
@@ -46,7 +47,7 @@ namespace AppOverview.Service
                     entity.Dependencies.Add(relatedEntity);
                 }
                 
-                await _dataProvider.UpdateEntityAsync(entity);
+                await _dataProvider.UpdateEntityAsync(entity, userName);
                 return entity;
             }
             catch (Exception ex)
@@ -57,7 +58,7 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<EntityDTO> RemoveRelatedEntityAsync(int entityId, int relatedEntityId)
+        public async Task<EntityDTO> RemoveRelatedEntityAsync(int entityId, int relatedEntityId, string userName)
         {
             try
             {
@@ -69,7 +70,7 @@ namespace AppOverview.Service
                     entity.Dependencies.Remove(relatedEntity);
                 }
 
-                await _dataProvider.UpdateEntityAsync(entity);
+                await _dataProvider.UpdateEntityAsync(entity, userName);
                 return entity;
             }
             catch (Exception ex)
@@ -80,17 +81,18 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateEntityAsync(EntityDTO entity)
+        public async Task UpdateEntityAsync(EntityDTO entity, string userName)
         {
+            if (!IsValidEntity(entity))
+            {
+                string errorMessage = "Invalid entity data provided.";
+                _logger.LogError("{ErrorMessage}", errorMessage);
+                throw new ArgumentException(errorMessage);
+            }
+
             try
             {
-                if (!IsValidEntity(entity))
-                {
-                    string errorMessage = "Invalid entity data provided.";
-                    _logger.LogError("{ErrorMessage}", errorMessage);
-                    throw new ArgumentException(errorMessage);
-                }
-                await _dataProvider.UpdateEntityAsync(entity);
+                await _dataProvider.UpdateEntityAsync(entity, userName);
             }
             catch (Exception ex)
             {

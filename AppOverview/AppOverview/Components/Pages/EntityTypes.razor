@@ -2,15 +2,18 @@
 @using AppOverview.Model
 @using AppOverview.Model.Interfaces
 @inject IEntityTypeService Service
+@inject IUserAuthService UserService
 @rendermode InteractiveServer
 
 <PageTitle>Entity Types</PageTitle>
 
 <h1>Entity Types</h1>
+@if (_currentUser?.IsAdmin == true)
+{
+    <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity Type</button>
+}
 
-<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity Type</button>
-
-@if (_showForm)
+@if (_showForm && _currentUser?.IsAdmin == true)
 {
     <EditForm Model="_editType" OnValidSubmit="OnSubmitTypeAsync">
         <DataAnnotationsValidator />
@@ -66,7 +69,10 @@ else
                         <input type="checkbox" checked="@type.IsActive" disabled />
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(type)">Edit</button>
+                        @if (_currentUser?.IsAdmin == true)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(type)">Edit</button>
+                        }
                     </td>
                 </tr>
             }

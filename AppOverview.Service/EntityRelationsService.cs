@@ -72,7 +72,7 @@ namespace AppOverview.Service
                     var related = new List<EntityDTO>();
                     foreach (var entity in directMatches)
                     {
-                        if (entity.Dependencies != null)
+                        if (entity.Dependencies is not null)
                         {
                             foreach (var dep in entity.Dependencies)
                             {
@@ -105,7 +105,7 @@ namespace AppOverview.Service
             var edges = new List<Edges>();
             try
             {
-                if (_filteredEntities is null)
+                if (_filteredEntities.Count == 0)
                 {
                     return (nodes, edges);
                 }
@@ -123,7 +123,7 @@ namespace AppOverview.Service
                 edges = new List<Edges>();
                 foreach (var entity in _filteredEntities)
                 {
-                    if (entity.Dependencies != null)
+                    if (entity.Dependencies is not null)
                     {
                         foreach (var dep in entity.Dependencies)
                         {

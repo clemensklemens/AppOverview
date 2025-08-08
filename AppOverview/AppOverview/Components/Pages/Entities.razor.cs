@@ -1,5 +1,7 @@
 // Code-behind for Entities.razor
+using AppOverview.Model;
 using AppOverview.Model.DTOs;
+using AppOverview.Model.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -26,6 +28,7 @@ namespace AppOverview.Components.Pages
 
         private string _dependencySearchText = string.Empty;
         private List<EntityDTO> _dependencyCandidates = new();
+        private User? _currentUser;
 
         private string DependencySearchText
         {
@@ -43,6 +46,7 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            _currentUser = UserService.GetUserNameAndPermissions();
             _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
             _departments = (await Service.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
             _technologies = (await Service.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
@@ -51,6 +55,7 @@ namespace AppOverview.Components.Pages
 
         private void ShowNewForm()
         {
+            if (_currentUser?.IsAdmin != true) return;
             _editEntity = new EntityDTO();
             _showForm = true;
             _isEdit = false;
@@ -58,6 +63,7 @@ namespace AppOverview.Components.Pages
 
         private void ShowEditForm(EntityDTO entity)
         {
+            if (_currentUser?.IsAdmin != true) return;
             _editEntity = entity;
             _showForm = true;
             _isEdit = true;
@@ -70,6 +76,8 @@ namespace AppOverview.Components.Pages
 
         private async Task OnSubmitEntityAsync()
         {
+            if (_currentUser?.IsAdmin != true) return;
+
             if (_entities == null)
             {
                 return;
@@ -90,7 +98,7 @@ namespace AppOverview.Components.Pages
 
             if (_isEdit)
             {
-                await Service.UpdateEntityAsync(_editEntity);
+                await Service.UpdateEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
                 var idx = _entities.FindIndex(e => e.Id == _editEntity.Id);
                 if (idx >= 0)
                 {
@@ -99,7 +107,7 @@ namespace AppOverview.Components.Pages
             }
             else
             {
-                var newEntity = await Service.AddEntityAsync(_editEntity);
+                var newEntity = await Service.AddEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
                 _entities.Add(newEntity);
             }
             _showForm = false;
@@ -108,6 +116,7 @@ namespace AppOverview.Components.Pages
 
         private void ShowEditDependencies(EntityDTO entity)
         {
+            if (_currentUser?.IsAdmin != true) return;
             _editingDependenciesEntity = entity;
             _showDependenciesEditor = true;
             _dependencySearchText = string.Empty;
@@ -137,24 +146,28 @@ namespace AppOverview.Components.Pages
 
         private async Task AddDependency(EntityDTO dep)
         {
+            if (_currentUser?.IsAdmin != true) return;
+
             if (_editingDependenciesEntity == null)
             {
                 return;
             }
 
-            _editingDependenciesEntity = await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);            
+            _editingDependenciesEntity = await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);            
             UpdateDependencyCandidates();
             StateHasChanged();
         }
 
         private async Task RemoveDependency(EntityDTO dep)
         {
+            if (_currentUser?.IsAdmin != true) return;
+
             if (_editingDependenciesEntity == null)
             {
                 return;
             }
             
-            _editingDependenciesEntity = await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id);
+            _editingDependenciesEntity = await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);
             UpdateDependencyCandidates();
             StateHasChanged();
         }

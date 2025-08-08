@@ -1,5 +1,7 @@
 // Code-behind for Technologies.razor
+using AppOverview.Model;
 using AppOverview.Model.DTOs;
+using AppOverview.Model.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace AppOverview.Components.Pages
@@ -11,22 +13,24 @@ namespace AppOverview.Components.Pages
         private bool _showForm = false;
         private bool _isEdit = false;
         protected bool _nameInvalid = false;
+        private User? _currentUser;
 
         protected override async Task OnInitializedAsync()
-        {            
+        {
+            _currentUser = UserService.GetUserNameAndPermissions();
             var data = await Service.GetTechnologiesAsync();
             _technologies = data.ToList();
         }
 
         private void ShowNewForm()
-        {
+        {            
             _editTechnology = new TechnologyDTO();
             _showForm = true;
             _isEdit = false;
         }
 
         private void ShowEditForm(TechnologyDTO technology)
-        {
+        {            
             _editTechnology = technology;
             _showForm = true;
             _isEdit = true;
@@ -39,7 +43,7 @@ namespace AppOverview.Components.Pages
 
         private async Task OnSubmitTechAsync()
         {
-            if (_technologies == null)
+            if (_technologies is null)
             {
                 return;
             }
@@ -55,7 +59,7 @@ namespace AppOverview.Components.Pages
 
             if (_isEdit)
             {
-                await Service.UpdateTechnologyAsync(_editTechnology);
+                await Service.UpdateTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
                 var idx = _technologies.FindIndex(t => t.Id == _editTechnology.Id);
                 if (idx >= 0)
                 {
@@ -64,7 +68,7 @@ namespace AppOverview.Components.Pages
             }
             else
             {
-                var newTechnology = await Service.AddTechnologyAsync(_editTechnology);
+                var newTechnology = await Service.AddTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
                 _technologies.Add(newTechnology);
             }
             _showForm = false;

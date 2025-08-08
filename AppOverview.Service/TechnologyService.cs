@@ -10,15 +10,19 @@ namespace AppOverview.Service
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<TechnologyService> _logger = logger;
 
-        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology)
+        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology, string userName)
         {
+            if (string.IsNullOrWhiteSpace(technology.Name))
+            {
+                string errorMessage = "Technology name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(technology));
+                _logger.LogError("{ErrorMessage} Technology: {Technology}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(technology.Name))
-                {
-                    throw new ArgumentException("Technology name cannot be null or empty.", nameof(technology));
-                }
-                var newTechnology = await _dataProvider.AddTechnologyAsync(technology);
+                var newTechnology = await _dataProvider.AddTechnologyAsync(technology, userName);
                 return newTechnology;
             }
             catch(Exception ex)
@@ -43,15 +47,19 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateTechnologyAsync(TechnologyDTO technology)
+        public async Task UpdateTechnologyAsync(TechnologyDTO technology, string userName)
         {
+            if (string.IsNullOrWhiteSpace(technology.Name))
+            {
+                string errorMessage = "Technology name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(technology));
+                _logger.LogError("{ErrorMessage} Technology: {Technology}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(technology.Name))
-                {
-                   throw new ArgumentException("Technology name cannot be null or empty.", nameof(technology));
-                }
-                await _dataProvider.UpdateTechnologyAsync(technology);
+                await _dataProvider.UpdateTechnologyAsync(technology, userName);
             }
             catch (Exception ex)
             {

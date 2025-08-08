@@ -1,5 +1,7 @@
 // Code-behind for EntityTypes.razor
+using AppOverview.Model;
 using AppOverview.Model.DTOs;
+using AppOverview.Model.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace AppOverview.Components.Pages
@@ -11,15 +13,18 @@ namespace AppOverview.Components.Pages
         private bool _showForm = false;
         private bool _isEdit = false;
         protected bool _nameInvalid = false;
+        private User? _currentUser;
 
         protected override async Task OnInitializedAsync()
         {
+            _currentUser = UserService.GetUserNameAndPermissions();
             var data = await Service.GetEntityTypesAsync();
             _entityTypes = data.ToList();
         }
 
         private void ShowNewForm()
         {
+            if (_currentUser?.IsAdmin != true) return;
             _editType = new EntityTypeDTO();
             _showForm = true;
             _isEdit = false;
@@ -27,6 +32,7 @@ namespace AppOverview.Components.Pages
 
         private void ShowEditForm(EntityTypeDTO type)
         {
+            if (_currentUser?.IsAdmin != true) return;
             _editType = type;
             _showForm = true;
             _isEdit = true;
@@ -39,6 +45,7 @@ namespace AppOverview.Components.Pages
 
         private async Task OnSubmitTypeAsync()
         {
+            if (_currentUser?.IsAdmin != true) return;
             if (_entityTypes == null)
             {
                 return;
@@ -55,7 +62,7 @@ namespace AppOverview.Components.Pages
 
             if (_isEdit)
             {
-                await Service.UpdateEntityTypeAsync(_editType);
+                await Service.UpdateEntityTypeAsync(_editType, _currentUser?.Name??string.Empty);
                 var idx = _entityTypes.FindIndex(t => t.Id == _editType.Id);
                 if (idx >= 0)
                 {
@@ -64,7 +71,7 @@ namespace AppOverview.Components.Pages
             }
             else
             {
-                var newEntityType = await Service.AddEntityTypeAsync(_editType);
+                var newEntityType = await Service.AddEntityTypeAsync(_editType, _currentUser?.Name ?? string.Empty);
                 _entityTypes.Add(newEntityType);                
             }
             _showForm = false;

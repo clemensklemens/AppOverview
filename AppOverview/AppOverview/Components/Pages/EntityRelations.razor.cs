@@ -9,8 +9,10 @@ namespace AppOverview.Components.Pages
     {
         private List<IdNameDTO>? _allTypes;
         private List<IdNameDTO>? _allDepartments;
-        private HashSet<int> _selectedTypeIds = new();
-        private HashSet<int> _selectedDepartmentIds = new();
+        private readonly HashSet<int> _selectedTypeIds = new();
+        private readonly HashSet<int> _selectedDepartmentIds = new();
+        private bool _typeFiltersExpanded = true;
+        private bool _departmentFiltersExpanded = true;
         private string _filterText = string.Empty;
         private string FilterText
         {
@@ -25,9 +27,6 @@ namespace AppOverview.Components.Pages
                 }
             }
         }
-        private HashSet<int> _expanded = new();
-        private bool _typeFiltersExpanded = true;
-        private bool _departmentFiltersExpanded = true;
 
         protected override async Task OnInitializedAsync()
         {

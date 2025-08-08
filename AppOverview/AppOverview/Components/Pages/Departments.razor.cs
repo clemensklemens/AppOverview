@@ -16,8 +16,7 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await Service.GetDepartmentsAsync();
-            _departments = data.ToList();
+            _departments = (await Service.GetDepartmentsAsync()).ToList();             
             _currentUser = UserService.GetUserNameAndPermissions();
         }
 
@@ -58,7 +57,7 @@ namespace AppOverview.Components.Pages
 
             if (_isEdit)
             {
-                await Service.UpdateDepartmentAsync(_editDepartment);
+                await Service.UpdateDepartmentAsync(_editDepartment, _currentUser?.Name??string.Empty);
                 var idx = _departments.FindIndex(d => d.Id == _editDepartment.Id);
                 if (idx >= 0)
                 {
@@ -67,7 +66,7 @@ namespace AppOverview.Components.Pages
             }
             else
             {
-                var newDepartment = await Service.AddDepartmentAsync(_editDepartment);
+                var newDepartment = await Service.AddDepartmentAsync(_editDepartment, _currentUser?.Name ?? string.Empty);
                 _departments.Add(newDepartment);                
             }
             _showForm = false;

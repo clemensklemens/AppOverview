@@ -10,15 +10,19 @@ namespace AppOverview.Service
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<EntityTypeService> _logger = logger;
 
-        public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType)
+        public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType, string userName)
         {
+            if (string.IsNullOrWhiteSpace(entityType.Name))
+            {
+                string errorMessage = "Entity type name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(entityType));
+                _logger.LogError("{ErrorMessage} Technology: {Technology}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(entityType.Name))
-                {
-                    throw new ArgumentException("Entity type name cannot be null or empty.", nameof(entityType));
-                }
-                return await _dataProvider.AddEntityTypeAsync(entityType);
+                return await _dataProvider.AddEntityTypeAsync(entityType, userName);
             }
             catch (Exception ex)
             {
@@ -42,15 +46,19 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType)
+        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType, string userName)
         {
+            if (string.IsNullOrWhiteSpace(entityType.Name))
+            {
+                string errorMessage = "Entity type name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(entityType));
+                _logger.LogError("{ErrorMessage} Technology: {Technology}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {                
-                if (string.IsNullOrWhiteSpace(entityType.Name))
-                {
-                    throw new ArgumentException("Entity type name cannot be null or empty.", nameof(entityType));
-                }
-                await _dataProvider.UpdateEntityTypeAsync(entityType);
+                await _dataProvider.UpdateEntityTypeAsync(entityType, userName);
             }
             catch (Exception ex)
             {

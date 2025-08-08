@@ -4,8 +4,8 @@ namespace AppOverview.Model.Interfaces
 {
     public interface IEntityTypeService
     {
-        Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType);
+        Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType, string userName);
         Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync();
-        Task UpdateEntityTypeAsync(EntityTypeDTO entityType);
+        Task UpdateEntityTypeAsync(EntityTypeDTO entityType, string userName);
     }
 }

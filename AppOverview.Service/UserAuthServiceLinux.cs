@@ -3,7 +3,7 @@ using AppOverview.Model.Interfaces;
 
 namespace AppOverview.Service
 {
-    public class UserAuthServiceWindowsLinux : IUserAuthService
+    public class UserAuthServiceLinux : IUserAuthService
     {
         public User GetUserNameAndPermissions()
         {

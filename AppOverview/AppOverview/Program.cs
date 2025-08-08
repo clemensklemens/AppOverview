@@ -42,7 +42,7 @@ namespace AppOverview
                 }
                 else if (OperatingSystem.IsLinux())
                 {
-                    builder.Services.AddSingleton<IUserAuthService, UserAuthServiceWindowsLinux>();
+                    builder.Services.AddSingleton<IUserAuthService, UserAuthServiceLinux>();
                 }
                 else
                 {

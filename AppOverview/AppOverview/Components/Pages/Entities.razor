@@ -2,15 +2,19 @@
 @using AppOverview.Model
 @using AppOverview.Model.Interfaces
 @inject IEntityService Service
+@inject IUserAuthService UserService
 @rendermode InteractiveServer
 
 <PageTitle>Entities</PageTitle>
 
 <h1>Entities</h1>
 
-<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
+@if (_currentUser?.IsAdmin == true)
+{
+    <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
+}
 
-@if (_showForm)
+@if (_showForm && _currentUser?.IsAdmin == true)
 {
     <EditForm Model="_editEntity" OnValidSubmit="OnSubmitEntityAsync">
         <DataAnnotationsValidator />
@@ -131,8 +135,11 @@ else
                         <input type="checkbox" checked="@entity.IsActive" disabled />
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(entity)">Edit</button>
-                        <button class="btn btn-sm btn-outline-info ms-1" type="button" @onclick="() => ShowEditDependencies(entity)">Edit Dependencies</button>
+                        @if (_currentUser?.IsAdmin == true)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(entity)">Edit</button>
+                            <button class="btn btn-sm btn-outline-info ms-1" type="button" @onclick="() => ShowEditDependencies(entity)">Edit Dependencies</button>
+                        }
                     </td>
                 </tr>
             }
@@ -140,7 +147,7 @@ else
     </table>
 }
 
-@if (_showDependenciesEditor && _editingDependenciesEntity != null)
+@if (_showDependenciesEditor && _editingDependenciesEntity != null && _currentUser?.IsAdmin == true)
 {
     <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,0.3);">
         <div class="modal-dialog">

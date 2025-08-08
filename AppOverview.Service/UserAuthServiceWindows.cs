@@ -6,7 +6,7 @@ namespace AppOverview.Service
 {
     public class UserAuthServiceWindows : IUserAuthService
     {
-        private readonly string _adGroupName = "testgroup";
+        private readonly string _adGroupName = "MyGroup";
 
         public User GetUserNameAndPermissions()
         {

@@ -2,15 +2,18 @@
 @using AppOverview.Model
 @using AppOverview.Model.Interfaces
 @inject ITechnologyService Service
+@inject IUserAuthService UserService
 @rendermode InteractiveServer
 
 <PageTitle>Technologies</PageTitle>
 
 <h1>Technologies</h1>
+@if (_currentUser?.IsAdmin == true)
+{
+    <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Technology</button>
+}
 
-<button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Technology</button>
-
-@if (_showForm)
+@if (_showForm && _currentUser?.IsAdmin == true)
 {
     <EditForm Model="_editTechnology" OnValidSubmit="OnSubmitTechAsync">
         <DataAnnotationsValidator />
@@ -60,7 +63,10 @@ else
                         <input type="checkbox" checked="@technology.IsActive" disabled />
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(technology)">Edit</button>
+                        @if (_currentUser?.IsAdmin == true)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(technology)">Edit</button>
+                        }
                     </td>
                 </tr>
             }

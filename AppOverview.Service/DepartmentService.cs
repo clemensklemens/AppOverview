@@ -10,15 +10,19 @@ namespace AppOverview.Service
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<DepartmentService> _logger = logger;
 
-        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department)
+        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department, string userName)
         {
+            if (string.IsNullOrWhiteSpace(department.Name))
+            {
+                string errorMessage = "Department name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(department));
+                _logger.LogError("{ErrorMessage} Exception: {Exception}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {
-                if(string.IsNullOrWhiteSpace(department.Name))
-                {
-                    throw new ArgumentException("Department name cannot be null or empty.", nameof(department));
-                }
-                var newDepartment = await _dataProvider.AddDepartmentAsync(department);
+                var newDepartment = await _dataProvider.AddDepartmentAsync(department, userName);
                 return newDepartment;
             }
             catch(Exception ex)
@@ -43,15 +47,19 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateDepartmentAsync(DepartmentDTO department)
+        public async Task UpdateDepartmentAsync(DepartmentDTO department, string userName)
         {
+            if (string.IsNullOrWhiteSpace(department.Name))
+            {
+                string errorMessage = "Department name cannot be null or empty.";
+                var ex = new ArgumentException(errorMessage, nameof(department));
+                _logger.LogError("{ErrorMessage} Exception: {Exception}", errorMessage, ex);
+                throw ex;
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(department.Name))
-                {
-                    throw new ArgumentException("Department name cannot be null or empty.", nameof(department));
-                }
-                await _dataProvider.UpdateDepartmentAsync(department);
+                await _dataProvider.UpdateDepartmentAsync(department, userName);
             }
             catch (Exception ex)
             {

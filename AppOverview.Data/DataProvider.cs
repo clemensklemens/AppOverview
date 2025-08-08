@@ -30,7 +30,7 @@ namespace AppOverview.Data
             new EntityTypeDTO { Id = 3, Name = "Type 3", Description = "Type 3 Desc", ColorHex = "#0000FF", IsActive = false }
         };
 
-        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department)
+        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department, string userName)
         {
             int maxId = _departments.Any() ? _departments.Max(d => d.Id) : 0;
             department.Id = maxId + 1; // Assign a new ID
@@ -38,7 +38,7 @@ namespace AppOverview.Data
             return department;
         }
 
-        public async Task<EntityDTO> AddEntityAsync(EntityDTO entity)
+        public async Task<EntityDTO> AddEntityAsync(EntityDTO entity, string userName)
         {
             int maxId = _entities.Any() ? _entities.Max(e => e.Id) : 0;
             entity.Id = maxId + 1; // Assign a new ID
@@ -53,7 +53,7 @@ namespace AppOverview.Data
             return entity;
         }
 
-        public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType)
+        public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType, string userName)
         {
             int maxId = _entityTypes.Any() ? _entityTypes.Max(et => et.Id) : 0;
             entityType.Id = maxId + 1; // Assign a new ID
@@ -61,7 +61,7 @@ namespace AppOverview.Data
             return entityType;
         }
 
-        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology)
+        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology, string userName)
         {
             int maxId = _technologies.Any() ? _technologies.Max(t => t.Id) : 0;
             technology.Id = maxId + 1; // Assign a new ID
@@ -175,7 +175,7 @@ namespace AppOverview.Data
             }
         }
 
-        public async Task UpdateDepartmentAsync(DepartmentDTO department)
+        public async Task UpdateDepartmentAsync(DepartmentDTO department, string userName)
         {
             var existingDepartment = _departments.FirstOrDefault(d => d.Id == department.Id);
             if (existingDepartment != null)
@@ -189,7 +189,7 @@ namespace AppOverview.Data
             }
         }
 
-        public async Task UpdateEntityAsync(EntityDTO entity)
+        public async Task UpdateEntityAsync(EntityDTO entity, string userName)
         {
             string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
             entity.ColorHex = color;
@@ -216,7 +216,7 @@ namespace AppOverview.Data
             }
         }
 
-        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType)
+        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType, string userName)
         {
             var existingEntityType = _entityTypes.FirstOrDefault(et => et.Id == entityType.Id);
             if (existingEntityType != null)
@@ -232,7 +232,7 @@ namespace AppOverview.Data
             }
         }
 
-        public async Task UpdateTechnologyAsync(TechnologyDTO technology)
+        public async Task UpdateTechnologyAsync(TechnologyDTO technology, string userName)
         {
             var existingTechnology = _technologies.FirstOrDefault(t => t.Id == technology.Id);
             if (existingTechnology != null)
