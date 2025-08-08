@@ -15,6 +15,30 @@ namespace AppOverview
             var logger = NLog.LogManager.GetCurrentClassLogger();
             try
             {
+                //get connection string from appsettings.json
+                var config = new ConfigurationBuilder()
+                    .AddJsonFile($"appsettings.json", true, true)
+                    .Build();
+                if (config is null)
+                {
+                    throw new InvalidOperationException("Configuration could not be loaded. Ensure appsettings.json exists and is properly formatted.");
+                }
+                string? connectionString = config.GetConnectionString("DefaultConnection");
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    throw new InvalidOperationException("Connection string is missing or empty in appsettings.json.");
+                }
+
+                // Ensure SQLite DB path is absolute and in the same folder as the executable
+                if (connectionString.EndsWith(".db") && !connectionString.StartsWith("Data Source"))
+                {
+                    string exePath = AppContext.BaseDirectory;
+                    connectionString = "Data Source=" + Path.Combine(exePath, connectionString);
+
+                    var context = new AppOverview.Data.Models.AppOverviewContext(connectionString);
+                    context.Database.EnsureCreated();
+                }
+
                 var builder = WebApplication.CreateBuilder(args);
 
                 // Remove default logging providers and add NLog
@@ -26,11 +50,8 @@ namespace AppOverview
                     .AddInteractiveServerComponents()
                     .AddInteractiveWebAssemblyComponents();
 
-                // Add Windows Authentication (Active Directory)
-                builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
-
                 // Register your application services
-                builder.Services.AddSingleton<IDataProvider, Data.DataProvider>();
+                builder.Services.AddSingleton<IDataProvider>(p => new Data.DataProvider(connectionString));
                 builder.Services.AddSingleton<ITechnologyService, TechnologyService>();
                 builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
                 builder.Services.AddSingleton<IEntityService, EntityService>();
@@ -38,6 +59,8 @@ namespace AppOverview
                 builder.Services.AddSingleton<IEntityRelationsService, EntityRelationsService>();
                 if (OperatingSystem.IsWindows())
                 {
+                    // Add Windows Authentication (Active Directory)
+                    builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
                     builder.Services.AddSingleton<IUserAuthService, UserAuthServiceWindows>();
                 }
                 else if (OperatingSystem.IsLinux())
@@ -48,7 +71,6 @@ namespace AppOverview
                 {
                     throw new PlatformNotSupportedException("Unsupported operating system for user authentication.");
                 }
-
 
                 var app = builder.Build();
 
