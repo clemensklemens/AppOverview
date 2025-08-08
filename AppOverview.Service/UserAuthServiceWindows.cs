@@ -14,6 +14,11 @@ namespace AppOverview.Service
             using var context = new PrincipalContext(ContextType.Domain);
             using var userPrincipal = UserPrincipal.FindByIdentity(context, userName) ?? throw new ServiceException($"User '{userName}' not found in Active Directory.");
 
+            if (userPrincipal is null)
+            {
+                throw new ServiceException("Permission denied");
+            }
+
             bool isAdmin = false;
             var group = GroupPrincipal.FindByIdentity(context, _adGroupName);
             if (group != null && userPrincipal.IsMemberOf(group))
