@@ -4,65 +4,73 @@
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 
-<PageTitle>Entity Relations</PageTitle>
-
-<h1>Entity Relations</h1>
-
-<div class="d-flex">
-    <div class="flex-grow-1">
-        <input class="form-control mb-3" placeholder="Filter entities..." @bind-value="FilterText" @bind-value:event="oninput" />
-        <div id="entity-graph" style="height: 600px; border: 1px solid #ccc; margin-bottom: 2rem;"></div>
-    </div>
-    <div class="ms-4" style="width: 250px;">
-        <div class="border rounded p-2">
-            <div>
-                <button class="btn btn-outline-secondary w-100 mb-2" @onclick="ToggleTypeFilters">@(_typeFiltersExpanded ? "Hide Type Filter" : "Show Type Filter")</button>
-                @if (_typeFiltersExpanded)
-                {
-                    <div>
-                        <strong>Filter by Type:</strong>
-                        @if (_allTypes is not null)
-                        {
-                            @foreach (var type in _allTypes)
-                            {
-                                <label class="d-block">
-                                    <input type="checkbox"
-                                           checked="@_selectedTypeIds.Contains(type.Id)"
-                                           @onchange="e => OnTypeChecked(type.Id, ((ChangeEventArgs)e).Value)" />
-                                    @type.Name
-                                </label>
-                            }
-                        }
-                    </div>
-                }
+<ErrorBoundary>
+    <ChildContent>
+        <PageTitle>Entity Relations</PageTitle>
+        <h1>Entity Relations</h1>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <input class="form-control mb-3" placeholder="Filter entities..." @bind-value="FilterText" @bind-value:event="oninput" />
+                <div id="entity-graph" style="height: 600px; border: 1px solid #ccc; margin-bottom: 2rem;"></div>
             </div>
-            <hr />
-            <div>
-                <button class="btn btn-outline-secondary w-100 mb-2" @onclick="ToggleDepartmentFilters">@(_departmentFiltersExpanded ? "Hide Department Filter" : "Show Department Filter")</button>
-                @if (_departmentFiltersExpanded)
-                {
+            <div class="ms-4" style="width: 250px;">
+                <div class="border rounded p-2">
                     <div>
-                        <strong>Filter by Department:</strong>
-                        @if (_allDepartments is not null)
+                        <button class="btn btn-outline-secondary w-100 mb-2" @onclick="ToggleTypeFilters">@(_typeFiltersExpanded ? "Hide Type Filter" : "Show Type Filter")</button>
+                        @if (_typeFiltersExpanded)
                         {
-                            @foreach (var dept in _allDepartments)
-                            {
-                                <label class="d-block">
-                                    <input type="checkbox"
-                                           checked="@_selectedDepartmentIds.Contains(dept.Id)"
-                                           @onchange="e => OnDepartmentChecked(dept.Id, ((ChangeEventArgs)e).Value)" />
-                                    @dept.Name
-                                </label>
-                            }
+                            <div>
+                                <strong>Filter by Type:</strong>
+                                @if (_allTypes is not null)
+                                {
+                                    @foreach (var type in _allTypes)
+                                    {
+                                        <label class="d-block">
+                                            <input type="checkbox"
+                                                   checked="@_selectedTypeIds.Contains(type.Id)"
+                                                   @onchange="e => OnTypeChecked(type.Id, ((ChangeEventArgs)e).Value)" />
+                                            @type.Name
+                                        </label>
+                                    }
+                                }
+                            </div>
                         }
                     </div>
-                }
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-secondary w-100 mb-2" @onclick="ToggleDepartmentFilters">@(_departmentFiltersExpanded ? "Hide Department Filter" : "Show Department Filter")</button>
+                        @if (_departmentFiltersExpanded)
+                        {
+                            <div>
+                                <strong>Filter by Department:</strong>
+                                @if (_allDepartments is not null)
+                                {
+                                    @foreach (var dept in _allDepartments)
+                                    {
+                                        <label class="d-block">
+                                            <input type="checkbox"
+                                                   checked="@_selectedDepartmentIds.Contains(dept.Id)"
+                                                   @onchange="e => OnDepartmentChecked(dept.Id, ((ChangeEventArgs)e).Value)" />
+                                            @dept.Name
+                                        </label>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-@if (_allTypes is null || _allDepartments is null) 
-{
-    <p><em>Loading...</em></p>
-}
+        @if (_allTypes is null || _allDepartments is null) 
+        {
+            <p><em>Loading...</em></p>
+        }
+    </ChildContent>
+    <ErrorContent>
+        <div class="alert alert-danger">Sorry, something went wrong loading this page.</div>
+    </ErrorContent>
+</ErrorBoundary>

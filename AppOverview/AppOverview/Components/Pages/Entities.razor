@@ -5,188 +5,195 @@
 @inject IUserAuthService UserService
 @rendermode InteractiveServer
 
-<PageTitle>Entities</PageTitle>
+<ErrorBoundary>
+    <ChildContent>
+        <PageTitle>Entities</PageTitle>
 
-<h1>Entities</h1>
+        <h1>Entities</h1>
 
-@if (_currentUser?.IsAdmin == true)
-{
-    <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
-}
+        @if (_currentUser?.IsAdmin == true)
+        {
+            <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Entity</button>
+        }
 
-@if (_showForm && _currentUser?.IsAdmin == true)
-{
-    <EditForm Model="_editEntity" OnValidSubmit="OnSubmitEntityAsync">
-        <DataAnnotationsValidator />
-        <div class="mb-2">
-            <label>Name:</label>
-            <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.Name" />
-            @if (_nameInvalid)
-            {
-                <div class="invalid-feedback">Name is required.</div>
-            }
-        </div>
-        <div class="mb-2">
-            <label>Description:</label>
-            <InputText class="form-control" @bind-Value="_editEntity.Description" />
-        </div>
-        <div class="mb-2">
-            <label>Type:</label>
-            <InputSelect class="@( _entityTypeInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TypeId">
-                <option value="">Select Type</option>
-                @if (_entityTypes != null)
-                {
-                    foreach (var entityType in _entityTypes)
+        @if (_showForm && _currentUser?.IsAdmin == true)
+        {
+            <EditForm Model="_editEntity" OnValidSubmit="OnSubmitEntityAsync">
+                <DataAnnotationsValidator />
+                <div class="mb-2">
+                    <label>Name:</label>
+                    <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.Name" />
+                    @if (_nameInvalid)
                     {
-                        <option value="@entityType.Id">@entityType.Name</option>
+                        <div class="invalid-feedback">Name is required.</div>
                     }
-                }
-            </InputSelect>
-            @if (_entityTypeInvalid)
-            {
-                <div class="invalid-feedback">Type is required.</div>
-            }
-        </div>
-        <div class="mb-2">
-            <label>Department:</label>
-            <InputSelect class="@( _departmentInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.DepartmentId">
-                <option value="">Select department</option>
-                @if (_departments != null)
-                {
-                    foreach (var department in _departments)
-                    {
-                        <option value="@department.Id">@department.Name</option>
-                    }
-                }
-            </InputSelect>
-            @if (_departmentInvalid)
-            {
-                <div class="invalid-feedback">Department is required.</div>
-            }
-        </div>
-        <div class="mb-2">
-            <label>Owner:</label>
-            <InputText class="form-control" @bind-Value="_editEntity.Owner" />
-        </div>
-        <div class="mb-2">
-            <label>Technology:</label>
-            <InputSelect class="@( _technologyInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TechnologyId">
-                <option value="">Select technology</option>
-                @if (_technologies != null)
-                {
-                    foreach (var technology in _technologies)
-                    {
-                        <option value="@technology.Id">@technology.Name</option>
-                    }
-                }
-            </InputSelect>
-            @if (_technologyInvalid)
-            {
-                <div class="invalid-feedback">Technology is required.</div>
-            }
-        </div>
-        <div class="mb-2">
-            <label>Source Control URL:</label>
-            <InputText class="form-control" @bind-Value="_editEntity.SourceControlUrl" />
-        </div>
-        <div class="mb-2">
-            <label>Active:</label>
-            <InputCheckbox class="form-check-input" @bind-Value="_editEntity.IsActive" />
-        </div>
-        <button class="btn btn-success me-2" type="submit">Save</button>
-        <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
-    </EditForm>
-}
-
-@if (_entities is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>                              
-                <th>Type</th>
-                <th>Department</th>
-                <th>Owner</th>
-                <th>Technology</th>
-                <th>Source Control URL</th>
-                <th>Color</th>
-                <th>Active</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var entity in _entities)
-            {
-                <tr @key="entity.Id">
-                    <td>@entity.Name</td>
-                    <td>@entity.Description</td>                                      
-                    <td>@entity.Type</td>
-                    <td>@entity.Department</td>
-                    <td>@entity.Owner</td>
-                    <td>@entity.Technology</td>
-                    <td>@entity.SourceControlUrl</td>
-                    <td><span style="color:@entity.ColorHex">@entity.ColorHex</span></td>
-                    <td>
-                        <input type="checkbox" checked="@entity.IsActive" disabled />
-                    </td>
-                    <td>
-                        @if (_currentUser?.IsAdmin == true)
+                </div>
+                <div class="mb-2">
+                    <label>Description:</label>
+                    <InputText class="form-control" @bind-Value="_editEntity.Description" />
+                </div>
+                <div class="mb-2">
+                    <label>Type:</label>
+                    <InputSelect class="@( _entityTypeInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TypeId">
+                        <option value="">Select Type</option>
+                        @if (_entityTypes != null)
                         {
-                            <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(entity)">Edit</button>
-                            <button class="btn btn-sm btn-outline-info ms-1" type="button" @onclick="() => ShowEditDependencies(entity)">Edit Dependencies</button>
+                            foreach (var entityType in _entityTypes)
+                            {
+                                <option value="@entityType.Id">@entityType.Name</option>
+                            }
                         }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                    </InputSelect>
+                    @if (_entityTypeInvalid)
+                    {
+                        <div class="invalid-feedback">Type is required.</div>
+                    }
+                </div>
+                <div class="mb-2">
+                    <label>Department:</label>
+                    <InputSelect class="@( _departmentInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.DepartmentId">
+                        <option value="">Select department</option>
+                        @if (_departments != null)
+                        {
+                            foreach (var department in _departments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                    @if (_departmentInvalid)
+                    {
+                        <div class="invalid-feedback">Department is required.</div>
+                    }
+                </div>
+                <div class="mb-2">
+                    <label>Owner:</label>
+                    <InputText class="form-control" @bind-Value="_editEntity.Owner" />
+                </div>
+                <div class="mb-2">
+                    <label>Technology:</label>
+                    <InputSelect class="@( _technologyInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editEntity.TechnologyId">
+                        <option value="">Select technology</option>
+                        @if (_technologies != null)
+                        {
+                            foreach (var technology in _technologies)
+                            {
+                                <option value="@technology.Id">@technology.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                    @if (_technologyInvalid)
+                    {
+                        <div class="invalid-feedback">Technology is required.</div>
+                    }
+                </div>
+                <div class="mb-2">
+                    <label>Source Control URL:</label>
+                    <InputText class="form-control" @bind-Value="_editEntity.SourceControlUrl" />
+                </div>
+                <div class="mb-2">
+                    <label>Active:</label>
+                    <InputCheckbox class="form-check-input" @bind-Value="_editEntity.IsActive" />
+                </div>
+                <button class="btn btn-success me-2" type="submit">Save</button>
+                <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
+            </EditForm>
+        }
 
-@if (_showDependenciesEditor && _editingDependenciesEntity != null && _currentUser?.IsAdmin == true)
-{
-    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,0.3);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Dependencies for @_editingDependenciesEntity.Name</h5>
-                    <button type="button" class="btn-close" @onclick="HideEditDependencies" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div>
-                        <strong>Current Dependencies:</strong>
-                        <ul>
-                            @foreach (var dep in _editingDependenciesEntity.Dependencies)
-                            {
-                                <li>
-                                    @dep.Name
-                                    <button class="btn btn-sm btn-danger ms-2" @onclick="() => RemoveDependency(dep)">Remove</button>
-                                </li>
-                            }
-                        </ul>
+        @if (_entities is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>                              
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th>Owner</th>
+                        <th>Technology</th>
+                        <th>Source Control URL</th>
+                        <th>Color</th>
+                        <th>Active</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entity in _entities)
+                    {
+                        <tr @key="entity.Id">
+                            <td>@entity.Name</td>
+                            <td>@entity.Description</td>                                      
+                            <td>@entity.Type</td>
+                            <td>@entity.Department</td>
+                            <td>@entity.Owner</td>
+                            <td>@entity.Technology</td>
+                            <td>@entity.SourceControlUrl</td>
+                            <td><span style="color:@entity.ColorHex">@entity.ColorHex</span></td>
+                            <td>
+                                <input type="checkbox" checked="@entity.IsActive" disabled />
+                            </td>
+                            <td>
+                                @if (_currentUser?.IsAdmin == true)
+                                {
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(entity)">Edit</button>
+                                    <button class="btn btn-sm btn-outline-info ms-1" type="button" @onclick="() => ShowEditDependencies(entity)">Edit Dependencies</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (_showDependenciesEditor && _editingDependenciesEntity != null && _currentUser?.IsAdmin == true)
+        {
+            <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,0.3);">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Dependencies for @_editingDependenciesEntity.Name</h5>
+                            <button type="button" class="btn-close" @onclick="HideEditDependencies" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <strong>Current Dependencies:</strong>
+                                <ul>
+                                    @foreach (var dep in _editingDependenciesEntity.Dependencies)
+                                    {
+                                        <li>
+                                            @dep.Name
+                                            <button class="btn btn-sm btn-danger ms-2" @onclick="() => RemoveDependency(dep)">Remove</button>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="mt-3">
+                                <strong>Add Dependency:</strong>
+                                <input class="form-control mb-2" placeholder="Search entities..." @bind-value="DependencySearchText" @bind-value:event="oninput" />
+                                <ul class="list-group">
+                                    @foreach (var candidate in _dependencyCandidates)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            @candidate.Name
+                                            <button class="btn btn-sm btn-success" @onclick="() => AddDependency(candidate)">Add</button>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" @onclick="HideEditDependencies">Close</button>
+                        </div>
                     </div>
-                    <div class="mt-3">
-                        <strong>Add Dependency:</strong>
-                        <input class="form-control mb-2" placeholder="Search entities..." @bind-value="DependencySearchText" @bind-value:event="oninput" />
-                        <ul class="list-group">
-                            @foreach (var candidate in _dependencyCandidates)
-                            {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    @candidate.Name
-                                    <button class="btn btn-sm btn-success" @onclick="() => AddDependency(candidate)">Add</button>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" @onclick="HideEditDependencies">Close</button>
                 </div>
             </div>
-        </div>
-    </div>
-}
+        }
+    </ChildContent>
+    <ErrorContent>
+        <div class="alert alert-danger">Sorry, something went wrong loading this page.</div>
+    </ErrorContent>
+</ErrorBoundary>

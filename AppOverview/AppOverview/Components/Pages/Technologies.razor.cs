@@ -13,12 +13,20 @@ namespace AppOverview.Components.Pages
         private bool _isEdit = false;
         protected bool _nameInvalid = false;
         private User? _currentUser;
+        private string? _errorMessage;
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = UserService.GetUserNameAndPermissions();
-            var data = await Service.GetTechnologiesAsync();
-            _technologies = data.ToList();
+            try
+            {
+                _currentUser = UserService.GetUserNameAndPermissions();
+                var data = await Service.GetTechnologiesAsync();
+                _technologies = data.ToList();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error loading technologies: {ex.Message}";
+            }
         }
 
         private void ShowNewForm()
@@ -56,21 +64,28 @@ namespace AppOverview.Components.Pages
             }
             _nameInvalid = false;
 
-            if (_isEdit)
+            try
             {
-                await Service.UpdateTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
-                var idx = _technologies.FindIndex(t => t.Id == _editTechnology.Id);
-                if (idx >= 0)
+                if (_isEdit)
                 {
-                    _technologies[idx] = _editTechnology;
-                }            
+                    await Service.UpdateTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
+                    var idx = _technologies.FindIndex(t => t.Id == _editTechnology.Id);
+                    if (idx >= 0)
+                    {
+                        _technologies[idx] = _editTechnology;
+                    }            
+                }
+                else
+                {
+                    var newTechnology = await Service.AddTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
+                    _technologies.Add(newTechnology);
+                }
+                _showForm = false;
             }
-            else
+            catch (Exception ex)
             {
-                var newTechnology = await Service.AddTechnologyAsync(_editTechnology, _currentUser?.Name ?? string.Empty);
-                _technologies.Add(newTechnology);
+                _errorMessage = $"Error saving technology: {ex.Message}";
             }
-            _showForm = false;
             StateHasChanged();
         }
     }

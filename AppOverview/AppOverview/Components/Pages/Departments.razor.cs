@@ -13,11 +13,19 @@ namespace AppOverview.Components.Pages
         private bool _isEdit = false;
         private bool _nameInvalid = false;
         private User? _currentUser;
+        private string? _errorMessage;
 
         protected override async Task OnInitializedAsync()
         {
-            _departments = (await Service.GetDepartmentsAsync()).ToList();             
-            _currentUser = UserService.GetUserNameAndPermissions();
+            try
+            {
+                _departments = (await Service.GetDepartmentsAsync()).ToList();             
+                _currentUser = UserService.GetUserNameAndPermissions();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error loading departments: {ex.Message}";
+            }
         }
 
         private void ShowNewForm()
@@ -55,21 +63,28 @@ namespace AppOverview.Components.Pages
             }
             _nameInvalid = false;
 
-            if (_isEdit)
+            try
             {
-                await Service.UpdateDepartmentAsync(_editDepartment, _currentUser?.Name??string.Empty);
-                var idx = _departments.FindIndex(d => d.Id == _editDepartment.Id);
-                if (idx >= 0)
+                if (_isEdit)
                 {
-                    _departments[idx] = _editDepartment;                    
+                    await Service.UpdateDepartmentAsync(_editDepartment, _currentUser?.Name??string.Empty);
+                    var idx = _departments.FindIndex(d => d.Id == _editDepartment.Id);
+                    if (idx >= 0)
+                    {
+                        _departments[idx] = _editDepartment;                    
+                    }
                 }
+                else
+                {
+                    var newDepartment = await Service.AddDepartmentAsync(_editDepartment, _currentUser?.Name ?? string.Empty);
+                    _departments.Add(newDepartment);                
+                }
+                _showForm = false;
             }
-            else
+            catch (Exception ex)
             {
-                var newDepartment = await Service.AddDepartmentAsync(_editDepartment, _currentUser?.Name ?? string.Empty);
-                _departments.Add(newDepartment);                
+                _errorMessage = $"Error saving department: {ex.Message}";
             }
-            _showForm = false;
             StateHasChanged();
         }
     }

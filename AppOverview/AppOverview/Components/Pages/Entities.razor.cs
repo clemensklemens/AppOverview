@@ -30,6 +30,8 @@ namespace AppOverview.Components.Pages
         private List<EntityDTO> _dependencyCandidates = new();
         private User? _currentUser;
 
+        private string? _errorMessage;
+
         private string DependencySearchText
         {
             get => _dependencySearchText;
@@ -46,11 +48,18 @@ namespace AppOverview.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = UserService.GetUserNameAndPermissions();
-            _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
-            _departments = (await Service.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
-            _technologies = (await Service.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
-            _entityTypes = (await Service.GetEntityTypesAsync()).OrderBy(x => x.Name).ToList();
+            try
+            {
+                _currentUser = UserService.GetUserNameAndPermissions();
+                _entities = (await Service.GetEntitiesAsync()).OrderBy(x => x.Name).ToList();
+                _departments = (await Service.GetDepartmentsAsync()).OrderBy(x => x.Name).ToList();
+                _technologies = (await Service.GetTechnologiesAsync()).OrderBy(x => x.Name).ToList();
+                _entityTypes = (await Service.GetEntityTypesAsync()).OrderBy(x => x.Name).ToList();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error loading entities: {ex.Message}";
+            }
         }
 
         private void ShowNewForm()
@@ -77,40 +86,43 @@ namespace AppOverview.Components.Pages
         private async Task OnSubmitEntityAsync()
         {
             if (_currentUser?.IsAdmin != true) return;
-
             if (_entities == null)
             {
                 return;
             }
-
             // Validate required fields
             _nameInvalid = string.IsNullOrWhiteSpace(_editEntity.Name);
             _descriptionInvalid = string.IsNullOrWhiteSpace(_editEntity.Description);
             _departmentInvalid = _editEntity.DepartmentId == 0;
             _entityTypeInvalid = _editEntity.TypeId == 0;
             _technologyInvalid = _editEntity.TechnologyId == 0;
-
             if (_nameInvalid || _descriptionInvalid || _departmentInvalid || _entityTypeInvalid || _technologyInvalid)
             {
                 StateHasChanged();
                 return;
             }
-
-            if (_isEdit)
+            try
             {
-                await Service.UpdateEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
-                var idx = _entities.FindIndex(e => e.Id == _editEntity.Id);
-                if (idx >= 0)
+                if (_isEdit)
                 {
-                    _entities[idx] = _editEntity;
+                    await Service.UpdateEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
+                    var idx = _entities.FindIndex(e => e.Id == _editEntity.Id);
+                    if (idx >= 0)
+                    {
+                        _entities[idx] = _editEntity;
+                    }
                 }
+                else
+                {
+                    var newEntity = await Service.AddEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
+                    _entities.Add(newEntity);
+                }
+                _showForm = false;
             }
-            else
+            catch (Exception ex)
             {
-                var newEntity = await Service.AddEntityAsync(_editEntity, _currentUser?.Name ?? string.Empty);
-                _entities.Add(newEntity);
+                _errorMessage = $"Error saving entity: {ex.Message}";
             }
-            _showForm = false;
             StateHasChanged();
         }
 
@@ -147,28 +159,38 @@ namespace AppOverview.Components.Pages
         private async Task AddDependency(EntityDTO dep)
         {
             if (_currentUser?.IsAdmin != true) return;
-
             if (_editingDependenciesEntity == null)
             {
                 return;
             }
-
-            _editingDependenciesEntity = await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);            
-            UpdateDependencyCandidates();
+            try
+            {
+                _editingDependenciesEntity = await Service.AddRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);            
+                UpdateDependencyCandidates();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error adding dependency: {ex.Message}";
+            }
             StateHasChanged();
         }
 
         private async Task RemoveDependency(EntityDTO dep)
         {
             if (_currentUser?.IsAdmin != true) return;
-
             if (_editingDependenciesEntity == null)
             {
                 return;
             }
-            
-            _editingDependenciesEntity = await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);
-            UpdateDependencyCandidates();
+            try
+            {
+                _editingDependenciesEntity = await Service.RemoveRelatedEntityAsync(_editingDependenciesEntity.Id, dep.Id, _currentUser?.Name ?? string.Empty);
+                UpdateDependencyCandidates();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error removing dependency: {ex.Message}";
+            }
             StateHasChanged();
         }
     }

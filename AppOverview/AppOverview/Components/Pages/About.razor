@@ -1,8 +1,14 @@
 @page "/about"
 
-<PageTitle>About</PageTitle>
-
-<div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh;">
-    <h1>About</h1>
-    <p>This application helps you track IT entities in your company. Built with Blazor WebAssembly and .NET 8.</p>
-</div>
+<ErrorBoundary>
+    <ChildContent>
+        <PageTitle>About</PageTitle>
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh;">
+            <h1>About</h1>
+            <p>This application helps you track IT entities in your company. Built with Blazor WebAssembly and .NET 8.</p>
+        </div>
+    </ChildContent>
+    <ErrorContent>
+        <div class="alert alert-danger">Sorry, something went wrong loading this page.</div>
+    </ErrorContent>
+</ErrorBoundary>
