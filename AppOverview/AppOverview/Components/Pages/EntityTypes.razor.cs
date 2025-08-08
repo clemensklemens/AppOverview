@@ -14,12 +14,20 @@ namespace AppOverview.Components.Pages
         private bool _isEdit = false;
         protected bool _nameInvalid = false;
         private User? _currentUser;
+        private string? _errorMessage;
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = UserService.GetUserNameAndPermissions();
-            var data = await Service.GetEntityTypesAsync();
-            _entityTypes = data.ToList();
+            try
+            {
+                _currentUser = UserService.GetUserNameAndPermissions();
+                var data = await Service.GetEntityTypesAsync();
+                _entityTypes = data.ToList();
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error loading entity types: {ex.Message}";
+            }
         }
 
         private void ShowNewForm()
@@ -50,7 +58,6 @@ namespace AppOverview.Components.Pages
             {
                 return;
             }
-
             // Validate name
             if (string.IsNullOrWhiteSpace(_editType.Name))
             {
@@ -59,22 +66,28 @@ namespace AppOverview.Components.Pages
                 return;
             }
             _nameInvalid = false;
-
-            if (_isEdit)
+            try
             {
-                await Service.UpdateEntityTypeAsync(_editType, _currentUser?.Name??string.Empty);
-                var idx = _entityTypes.FindIndex(t => t.Id == _editType.Id);
-                if (idx >= 0)
+                if (_isEdit)
                 {
-                    _entityTypes[idx] = _editType;                    
+                    await Service.UpdateEntityTypeAsync(_editType, _currentUser?.Name??string.Empty);
+                    var idx = _entityTypes.FindIndex(t => t.Id == _editType.Id);
+                    if (idx >= 0)
+                    {
+                        _entityTypes[idx] = _editType;                    
+                    }
                 }
+                else
+                {
+                    var newEntityType = await Service.AddEntityTypeAsync(_editType, _currentUser?.Name ?? string.Empty);
+                    _entityTypes.Add(newEntityType);                
+                }
+                _showForm = false;
             }
-            else
+            catch (Exception ex)
             {
-                var newEntityType = await Service.AddEntityTypeAsync(_editType, _currentUser?.Name ?? string.Empty);
-                _entityTypes.Add(newEntityType);                
+                _errorMessage = $"Error saving entity type: {ex.Message}";
             }
-            _showForm = false;
             StateHasChanged();
         }
     }

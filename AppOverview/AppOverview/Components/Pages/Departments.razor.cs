@@ -19,8 +19,8 @@ namespace AppOverview.Components.Pages
         {
             try
             {
-                _departments = (await Service.GetDepartmentsAsync()).ToList();             
                 _currentUser = UserService.GetUserNameAndPermissions();
+                _departments = (await Service.GetDepartmentsAsync()).ToList();                
             }
             catch (Exception ex)
             {

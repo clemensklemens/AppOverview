@@ -1,4 +1,5 @@
 // Code-behind for EntityRelations.razor
+using AppOverview.Model;
 using AppOverview.Model.DTOs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -14,6 +15,7 @@ namespace AppOverview.Components.Pages
         private bool _typeFiltersExpanded = true;
         private bool _departmentFiltersExpanded = true;
         private string _filterText = string.Empty;
+        private User? _currentUser;
         private string FilterText
         {
             get => _filterText;
@@ -28,12 +30,22 @@ namespace AppOverview.Components.Pages
             }
         }
 
+        private string? _errorMessage;
+
         protected override async Task OnInitializedAsync()
         {
-            await Service.InitServiceAsync();
-            _allTypes = Service.EntityTypes.OrderBy(x => x.Name).ToList();
-            _allDepartments = Service.Departments.OrderBy(x => x.Name).ToList();
-            Service.FilterEntities(_filterText, _selectedTypeIds, _selectedDepartmentIds);
+            try
+            {
+                _currentUser = UserService.GetUserNameAndPermissions();
+                await Service.InitServiceAsync();
+                _allTypes = Service.EntityTypes.OrderBy(x => x.Name).ToList();
+                _allDepartments = Service.Departments.OrderBy(x => x.Name).ToList();
+                Service.FilterEntities(_filterText, _selectedTypeIds, _selectedDepartmentIds);
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error loading entity relations: {ex.Message}";
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -80,8 +92,15 @@ namespace AppOverview.Components.Pages
 
         private async Task RenderGraphAsync()
         {
-            (var nodes, var edges) = Service.GetGraphItems();
-            await JS.InvokeVoidAsync("entityGraph.render", "entity-graph", nodes, edges);
+            try
+            {
+                (var nodes, var edges) = Service.GetGraphItems();
+                await JS.InvokeVoidAsync("entityGraph.render", "entity-graph", nodes, edges);
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = $"Error rendering graph: {ex.Message}";
+            }
         }
     }
 }

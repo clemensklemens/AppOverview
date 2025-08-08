@@ -10,6 +10,10 @@
         <PageTitle>Entities</PageTitle>
 
         <h1>Entities</h1>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {   
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
 
         @if (_currentUser?.IsAdmin == true)
         {

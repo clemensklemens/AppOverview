@@ -10,6 +10,10 @@
     <ChildContent>
         <PageTitle>Departments</PageTitle>
         <h1>Departments</h1>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
         @if (_currentUser?.IsAdmin == true)
         {
             <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Department</button>
