@@ -26,10 +26,6 @@
             }
         </div>
         <div class="mb-2">
-            <label>Description:</label>
-            <InputText class="form-control" @bind-Value="_editTechnology.Description" />
-        </div>
-        <div class="mb-2">
             <label>Active:</label>
             <InputCheckbox class="form-check-input" @bind-Value="_editTechnology.IsActive" />
         </div>
@@ -48,7 +44,6 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Active</th>
                 <th></th>
             </tr>
@@ -58,7 +53,6 @@ else
             {
                 <tr @key="technology.Id">
                     <td>@technology.Name</td>
-                    <td>@technology.Description</td>
                     <td>
                         <input type="checkbox" checked="@technology.IsActive" disabled />
                     </td>

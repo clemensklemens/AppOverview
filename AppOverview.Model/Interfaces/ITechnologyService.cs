@@ -4,8 +4,8 @@ namespace AppOverview.Model.Interfaces
 {
     public interface ITechnologyService
     {
-        Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology, string userName);
-        Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync();
-        Task UpdateTechnologyAsync(TechnologyDTO technology, string userName);
+        Task<IdNameDTO> AddTechnologyAsync(IdNameDTO technology, string userName);
+        Task<IEnumerable<IdNameDTO>> GetTechnologiesAsync();
+        Task UpdateTechnologyAsync(IdNameDTO technology, string userName);
     }
 }

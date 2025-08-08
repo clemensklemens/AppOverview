@@ -22,7 +22,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task AddDepartmentAsync_ValidDepartment_ReturnsDepartment()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "HR", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "HR", IsActive = true };
             _dataProviderMock.Setup(x => x.AddDepartmentAsync(department, "user")).ReturnsAsync(department);
 
             var result = await _service.AddDepartmentAsync(department, "user");
@@ -33,14 +33,14 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task AddDepartmentAsync_EmptyName_ThrowsArgumentException()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "", IsActive = true };
             await Assert.ThrowsAsync<ArgumentException>(() => _service.AddDepartmentAsync(department, "user"));
         }
 
         [Fact]
         public async Task AddDepartmentAsync_DataProviderThrows_ThrowsServiceException()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "HR", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "HR", IsActive = true };
             _dataProviderMock.Setup(x => x.AddDepartmentAsync(department, "user")).ThrowsAsync(new Exception("db error"));
 
             var ex = await Assert.ThrowsAsync<ServiceException>(() => _service.AddDepartmentAsync(department, "user"));
@@ -50,7 +50,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetDepartmentsAsync_ReturnsDepartments()
         {
-            var departments = new List<DepartmentDTO> { new DepartmentDTO { Id = 1, Name = "HR" } };
+            var departments = new List<IdNameDTO> { new IdNameDTO { Id = 1, Name = "HR" } };
             _dataProviderMock.Setup(x => x.GetDepartmentsAsync(false)).ReturnsAsync(departments);
 
             var result = await _service.GetDepartmentsAsync();
@@ -69,7 +69,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task UpdateDepartmentAsync_ValidDepartment_CallsDataProvider()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "HR", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "HR", IsActive = true };
             _dataProviderMock.Setup(x => x.UpdateDepartmentAsync(department, "user")).Returns(Task.CompletedTask);
 
             await _service.UpdateDepartmentAsync(department, "user");
@@ -79,14 +79,14 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task UpdateDepartmentAsync_EmptyName_ThrowsArgumentException()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "", IsActive = true };
             await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateDepartmentAsync(department, "user"));
         }
 
         [Fact]
         public async Task UpdateDepartmentAsync_DataProviderThrows_ThrowsServiceException()
         {
-            var department = new DepartmentDTO { Id = 1, Name = "HR", IsActive = true };
+            var department = new IdNameDTO { Id = 1, Name = "HR", IsActive = true };
             _dataProviderMock.Setup(x => x.UpdateDepartmentAsync(department, "user")).ThrowsAsync(new Exception("db error"));
 
             var ex = await Assert.ThrowsAsync<ServiceException>(() => _service.UpdateDepartmentAsync(department, "user"));

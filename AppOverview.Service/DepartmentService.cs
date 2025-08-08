@@ -10,7 +10,7 @@ namespace AppOverview.Service
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<DepartmentService> _logger = logger;
 
-        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department, string userName)
+        public async Task<IdNameDTO> AddDepartmentAsync(IdNameDTO department, string userName)
         {
             if (string.IsNullOrWhiteSpace(department.Name))
             {
@@ -33,7 +33,7 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync()
+        public async Task<IEnumerable<IdNameDTO>> GetDepartmentsAsync()
         {
             try
             {                
@@ -47,7 +47,7 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateDepartmentAsync(DepartmentDTO department, string userName)
+        public async Task UpdateDepartmentAsync(IdNameDTO department, string userName)
         {
             if (string.IsNullOrWhiteSpace(department.Name))
             {

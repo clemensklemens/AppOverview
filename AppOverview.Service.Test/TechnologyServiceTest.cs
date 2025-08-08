@@ -22,7 +22,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task AddTechnologyAsync_ValidTechnology_ReturnsTechnology()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = ".NET", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = ".NET", IsActive = true };
             _dataProviderMock.Setup(x => x.AddTechnologyAsync(technology, "user")).ReturnsAsync(technology);
 
             var result = await _service.AddTechnologyAsync(technology, "user");
@@ -33,14 +33,14 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task AddTechnologyAsync_EmptyName_ThrowsArgumentException()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = "", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = "", IsActive = true };
             await Assert.ThrowsAsync<ArgumentException>(() => _service.AddTechnologyAsync(technology, "user"));
         }
 
         [Fact]
         public async Task AddTechnologyAsync_DataProviderThrows_ThrowsServiceException()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = ".NET", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = ".NET", IsActive = true };
             _dataProviderMock.Setup(x => x.AddTechnologyAsync(technology, "user")).ThrowsAsync(new Exception("db error"));
 
             var ex = await Assert.ThrowsAsync<ServiceException>(() => _service.AddTechnologyAsync(technology, "user"));
@@ -50,7 +50,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetTechnologiesAsync_ReturnsTechnologies()
         {
-            var technologies = new List<TechnologyDTO> { new TechnologyDTO { Id = 1, Name = ".NET" } };
+            var technologies = new List<IdNameDTO> { new IdNameDTO { Id = 1, Name = ".NET" } };
             _dataProviderMock.Setup(x => x.GetTechnologiesAsync(false)).ReturnsAsync(technologies);
 
             var result = await _service.GetTechnologiesAsync();
@@ -69,7 +69,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task UpdateTechnologyAsync_ValidTechnology_CallsDataProvider()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = ".NET", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = ".NET", IsActive = true };
             _dataProviderMock.Setup(x => x.UpdateTechnologyAsync(technology, "user")).Returns(Task.CompletedTask);
 
             await _service.UpdateTechnologyAsync(technology, "user");
@@ -79,14 +79,14 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task UpdateTechnologyAsync_EmptyName_ThrowsArgumentException()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = "", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = "", IsActive = true };
             await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateTechnologyAsync(technology, "user"));
         }
 
         [Fact]
         public async Task UpdateTechnologyAsync_DataProviderThrows_ThrowsServiceException()
         {
-            var technology = new TechnologyDTO { Id = 1, Name = ".NET", IsActive = true };
+            var technology = new IdNameDTO { Id = 1, Name = ".NET", IsActive = true };
             _dataProviderMock.Setup(x => x.UpdateTechnologyAsync(technology, "user")).ThrowsAsync(new Exception("db error"));
 
             var ex = await Assert.ThrowsAsync<ServiceException>(() => _service.UpdateTechnologyAsync(technology, "user"));

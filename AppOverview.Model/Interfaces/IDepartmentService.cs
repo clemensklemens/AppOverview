@@ -4,8 +4,8 @@ namespace AppOverview.Model.Interfaces
 {
     public interface IDepartmentService
     {
-        Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department, string userName);
-        Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync();
-        Task UpdateDepartmentAsync(DepartmentDTO department, string userName);
+        Task<IdNameDTO> AddDepartmentAsync(IdNameDTO department, string userName);
+        Task<IEnumerable<IdNameDTO>> GetDepartmentsAsync();
+        Task UpdateDepartmentAsync(IdNameDTO department, string userName);
     }
 }

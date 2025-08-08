@@ -1,250 +1,327 @@
-﻿using AppOverview.Model.DTOs;
+﻿using AppOverview.Data.Models;
+using AppOverview.Model.DTOs;
 using AppOverview.Model.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppOverview.Data
 {
-    public class DataProvider : IDataProvider
+    public class DataProvider(string connectionString) : IDataProvider
     {
-        private static List<TechnologyDTO> _technologies = new List<TechnologyDTO>()
-        {
-            new TechnologyDTO { Id = 1, Name = ".NET", Description = ".NET Framework", IsActive = true },
-            new TechnologyDTO { Id = 2, Name = "JavaScript", Description = "JS Language", IsActive = true },
-            new TechnologyDTO { Id = 3, Name = "Python", Description = "Python Language", IsActive = false }
-        };
-        private static List<DepartmentDTO> _departments = new List<DepartmentDTO>
-        {
-            new DepartmentDTO { Id = 1, Name = "HR", IsActive = true },
-            new DepartmentDTO { Id = 2, Name = "IT", IsActive = true },
-            new DepartmentDTO { Id = 3, Name = "Finance", IsActive = false }
-        };
-        private static List<EntityDTO> _entities = new List<EntityDTO>()
-        {            
-            new EntityDTO { Id = 1, Name = "Entity Alpha", Description = "First test entity", Owner = "John Doe", SourceControlUrl = "www.123.com", TypeId = 1, Type = "Type 1", DepartmentId = 1, Department = "HR", TechnologyId = 1, Technology = ".NET", ColorHex = "#FF0000", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 2, Name = "Entity Beta", Description = "Second test entity", Owner = "Jane Doe", SourceControlUrl = string.Empty, TypeId = 2, Type = "Type 2", DepartmentId = 2, Department = "IT", TechnologyId = 2, Technology = "JavaScript", ColorHex = "#00FF00", IsActive = true, Dependencies = new List<EntityDTO>() },
-            new EntityDTO { Id = 3, Name = "Entity Gamma", Description = "Third test entity", Owner = "Jane Doe", SourceControlUrl = "https://github.com/clemensklemens/AppOverview/tree/main", TypeId = 3, Type = "Type 3", DepartmentId = 3, Department = "Finance", TechnologyId = 3, Technology = "Python", ColorHex = "#0000FF", IsActive = false, Dependencies = new List<EntityDTO>() }
-        };
-        private static List<EntityTypeDTO> _entityTypes = new List<EntityTypeDTO>()
-        {
-            new EntityTypeDTO { Id = 1, Name = "Type 1", Description = "Type 1 Desc", ColorHex = "#FF0000", IsActive = true },
-            new EntityTypeDTO { Id = 2, Name = "Type 2", Description = "Type 2 Desc", ColorHex = "#00FF00", IsActive = true },
-            new EntityTypeDTO { Id = 3, Name = "Type 3", Description = "Type 3 Desc", ColorHex = "#0000FF", IsActive = false }
-        };
+        private readonly string _connetionString = connectionString;
 
-        public async Task<DepartmentDTO> AddDepartmentAsync(DepartmentDTO department, string userName)
+        public async Task<IEnumerable<IdNameDTO>> GetTechnologiesAsync(bool activeOnly)
         {
-            int maxId = _departments.Any() ? _departments.Max(d => d.Id) : 0;
-            department.Id = maxId + 1; // Assign a new ID
-            _departments.Add(department);
+            List<IdNameDTO> technologies = new List<IdNameDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var technologiesQry = context.Technologies.Where(x => !activeOnly || x.Active);
+            await technologiesQry.ForEachAsync(technology =>
+                technologies.Add(new IdNameDTO
+                {
+                    Id = technology.TechnologyId,
+                    Name = technology.Name,
+                    IsActive = technology.Active
+                }));
+            return technologies;
+        }
+
+        public async Task<IEnumerable<IdNameDTO>> GetDepartmentsAsync(bool activeOnly)
+        {
+            List<IdNameDTO> departments = new List<IdNameDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var departmentsQry = context.Departments.Where(x => !activeOnly || x.Active);
+            await departmentsQry.ForEachAsync(department =>
+                departments.Add(new IdNameDTO
+                {
+                    Id = department.DepartmentId,
+                    Name = department.Name,
+                    IsActive = department.Active
+                }));
+            return departments;
+        }
+
+        public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync(bool activeOnly)
+        {
+            List<EntityTypeDTO> entityTypes = new List<EntityTypeDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var entityTypesQry = context.EntityTypes.Where(x => !activeOnly || x.Active);
+            await entityTypesQry.ForEachAsync(entityType =>
+                entityTypes.Add(new EntityTypeDTO
+                {
+                    Id = entityType.EntityTypeId,
+                    Name = entityType.Name,
+                    ColorHex = entityType.Apperance,
+                    IsActive = entityType.Active
+                }));
+            return entityTypes;
+        }
+
+        public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync(bool activeOnly)
+        {
+            List<EntityDTO> entities = new List<EntityDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var entitiesQry = context.Entities
+                .Include(e => e.EntityType)
+                .Include(e => e.Department)
+                .Include(e => e.Technology)
+                .Where(x => !activeOnly || x.Active);
+
+            await entitiesQry.ForEachAsync(entity =>
+            {
+                var entityDto = new EntityDTO
+                {
+                    Id = entity.EntityId,
+                    Name = entity.Name,
+                    Description = entity.Description ?? string.Empty,
+                    TypeId = entity.EntityTypeId,
+                    Type = entity.EntityType?.Name ?? string.Empty,
+                    DepartmentId = entity.DepartmentId,
+                    Department = entity.Department?.Name ?? string.Empty,
+                    TechnologyId = entity.TechnologyId,
+                    Technology = entity.Technology?.Name ?? string.Empty,
+                    SourceControlUrl = entity.SourceControlUrl ?? string.Empty,
+                    Owner = entity.Owner ?? string.Empty,
+                    ColorHex = entity.EntityType?.Apperance ?? "#000000",
+                    IsActive = entity.Active,
+                    Dependencies = new List<EntityDTO>()
+                };
+                entityDto.Dependencies = LoadDependenciesAsync(entity.EntityId).Result.ToList();
+                entities.Add(entityDto);
+            });
+            return entities;
+        }
+
+        public async Task<EntityDTO> GetEntityAsync(int id)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var entity = await context.Entities.Include(e => e.EntityType)
+                .Include(e => e.Department)
+                .Include(e => e.Technology)
+                .FirstOrDefaultAsync(e => e.EntityId == id);
+            if (entity is null)
+            {
+                throw new KeyNotFoundException($"Entity with ID {id} not found.");
+            }
+
+            var entityDto = new EntityDTO
+            {
+                Id = entity.EntityId,
+                Name = entity.Name,
+                Description = entity.Description ?? string.Empty,
+                TypeId = entity.EntityTypeId,
+                Type = entity.EntityType?.Name ?? string.Empty,
+                DepartmentId = entity.DepartmentId,
+                Department = entity.Department?.Name ?? string.Empty,
+                TechnologyId = entity.TechnologyId,
+                Technology = entity.Technology?.Name ?? string.Empty,
+                SourceControlUrl = entity.SourceControlUrl ?? string.Empty,
+                Owner = entity.Owner ?? string.Empty,
+                ColorHex = entity.EntityType?.Apperance ?? "#000000",
+                IsActive = entity.Active,
+                Dependencies = new List<EntityDTO>()
+            };
+            entityDto.Dependencies = (await LoadDependenciesAsync(entity.EntityId)).ToList();
+            return entityDto;
+        }
+
+        public async Task UpdateTechnologyAsync(IdNameDTO technologyDto, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var technology = await context.Technologies.FirstOrDefaultAsync(t => t.TechnologyId == technologyDto.Id);
+            if (technology is null)
+            {
+                throw new KeyNotFoundException($"Technology with ID {technologyDto.Id} not found.");
+            }
+
+            technology.Name = technologyDto.Name;
+            technology.Active = technologyDto.IsActive;
+            technology.LastUser = userName;
+            technology.LastChange = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateDepartmentAsync(IdNameDTO departmentDto, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var department = await context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == departmentDto.Id);
+            if (department is null)
+            {
+                throw new KeyNotFoundException($"Department with ID {departmentDto.Id} not found.");
+            }
+
+            department.Name = departmentDto.Name;
+            department.Active = departmentDto.IsActive;
+            department.LastUser = userName;
+            department.LastChange = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateEntityAsync(EntityDTO entityDto, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var entity = await context.Entities.FirstOrDefaultAsync(e => e.EntityId == entityDto.Id);
+            if (entity is null)
+            {
+                throw new KeyNotFoundException($"Entity with ID {entityDto.Id} not found.");
+            }
+
+            entity.Name = entityDto.Name;
+            entity.Description = entityDto.Description;
+            entity.SourceControlUrl = entityDto.SourceControlUrl;
+            entity.Owner = entityDto.Owner;
+            entity.EntityTypeId = entityDto.TypeId;
+            entity.DepartmentId = entityDto.DepartmentId;
+            entity.TechnologyId = entityDto.TechnologyId;
+            entity.Active = entityDto.IsActive;
+            entity.LastUser = userName;
+            entity.LastChange = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var et = await context.EntityTypes.FirstOrDefaultAsync(e => e.EntityTypeId == entityType.Id);
+            if (et is null)
+            {
+                throw new KeyNotFoundException($"Entity Type with ID {entityType.Id} not found.");
+            }
+
+            et.Name = entityType.Name;
+            et.Apperance = entityType.ColorHex;
+            et.Active = entityType.IsActive;
+            et.LastUser = userName;
+            et.LastChange = DateTime.UtcNow;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<IdNameDTO> AddTechnologyAsync(IdNameDTO technology, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var tech = new Technology
+            {
+                Name = technology.Name,
+                Active = technology.IsActive,
+                LastUser = userName,
+                LastChange = DateTime.UtcNow
+            };
+            context.Technologies.Add(tech);
+            await context.SaveChangesAsync();
+            technology.Id = tech.TechnologyId;
+            return technology;
+        }
+
+        public async Task<IdNameDTO> AddDepartmentAsync(IdNameDTO department, string userName)
+        {
+            using var context = new AppOverviewContext(_connetionString);
+            var dep = new Department
+            {
+                Name = department.Name,
+                Active = department.IsActive,
+                LastUser = userName,
+                LastChange = DateTime.UtcNow
+            };
+            context.Departments.Add(dep);
+            await context.SaveChangesAsync();
+            department.Id = dep.DepartmentId;
             return department;
         }
 
         public async Task<EntityDTO> AddEntityAsync(EntityDTO entity, string userName)
         {
-            int maxId = _entities.Any() ? _entities.Max(e => e.Id) : 0;
-            entity.Id = maxId + 1; // Assign a new ID
-            string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
-            string type = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.Name ?? "Unknown Type";
-            string department = _departments.FirstOrDefault(d => d.Id == entity.DepartmentId)?.Name ?? "Unknown Department";
-
-            entity.ColorHex = color;
-            entity.Type = type;
-            entity.Department = department;
-            _entities.Add(entity);
+            using var context = new AppOverviewContext(_connetionString);
+            var ent = new Entity
+            {
+                Name = entity.Name,
+                Description = entity.Description,
+                SourceControlUrl = entity.SourceControlUrl,
+                Owner = entity.Owner,
+                EntityTypeId = entity.TypeId,
+                DepartmentId = entity.DepartmentId,
+                TechnologyId = entity.TechnologyId,
+                Active = entity.IsActive,
+                LastUser = userName,
+                LastChange = DateTime.UtcNow
+            };
+            context.Entities.Add(ent);
+            await context.SaveChangesAsync();
+            entity.Id = ent.EntityId;
             return entity;
         }
 
         public async Task<EntityTypeDTO> AddEntityTypeAsync(EntityTypeDTO entityType, string userName)
         {
-            int maxId = _entityTypes.Any() ? _entityTypes.Max(et => et.Id) : 0;
-            entityType.Id = maxId + 1; // Assign a new ID
-            _entityTypes.Add(entityType);
+            using var context = new AppOverviewContext(_connetionString);
+            var et = new EntityType
+            {
+                Name = entityType.Name,
+                Apperance = entityType.ColorHex,
+                Active = entityType.IsActive,
+                LastUser = userName,
+                LastChange = DateTime.UtcNow
+            };
+            context.EntityTypes.Add(et);
+            await context.SaveChangesAsync();
+            entityType.Id = et.EntityTypeId;
             return entityType;
         }
 
-        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology, string userName)
+        public async Task<IEnumerable<IdNameDTO>> GetEntitiesIdNameAsync(bool activeOnly)
         {
-            int maxId = _technologies.Any() ? _technologies.Max(t => t.Id) : 0;
-            technology.Id = maxId + 1; // Assign a new ID
-            _technologies.Add(technology);
-            return technology;
+            List<IdNameDTO> entities = new List<IdNameDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var entitiesQry = context.Entities.Where(x => !activeOnly || x.Active);
+            await entitiesQry.ForEachAsync(entity =>
+                entities.Add(new IdNameDTO
+                {
+                    Id = entity.EntityId,
+                    Name = entity.Name,
+                    IsActive = entity.Active
+                }));
+            return entities;
         }
 
-        public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsAsync(bool activeOnly)
+        public async Task<IEnumerable<IdNameDTO>> GetEntityTypeIdNameAsync(bool activeOnly)
         {
-            if(activeOnly)
-            {
-                return _departments.Where(d => d.IsActive);
-            }
-            else
-            {
-                return _departments;
-            }                
+            List<IdNameDTO> entityTypes = new List<IdNameDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var entityTypesQry = context.EntityTypes.Where(x => !activeOnly || x.Active);
+            await entityTypesQry.ForEachAsync(entityType =>
+                entityTypes.Add(new IdNameDTO
+                {
+                    Id = entityType.EntityTypeId,
+                    Name = entityType.Name,
+                    IsActive = entityType.Active
+                }));
+            return entityTypes;
         }
 
-        public async Task<IEnumerable<IdNameDTO>> GetDepartmentsIdNameListAsync(bool activeOnly)
+        private async Task<IEnumerable<EntityDTO>> LoadDependenciesAsync(int entityId)
         {
-            if (activeOnly)
+            List<EntityDTO> dependencies = new List<EntityDTO>();
+            using var context = new AppOverviewContext(_connetionString);
+            var dependenciesQry = context.Relations
+                .Where(r => r.SourceEntityId == entityId && r.TargetEntity.Active)
+                .Select(r => r.TargetEntity);
+            await dependenciesQry.ForEachAsync(dependency =>
             {
-                return _departments.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-            else
-            {                
-                return _departments.Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-        }
-
-        public async Task<IEnumerable<EntityDTO>> GetEntitiesAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _entities.Where(d => d.IsActive);
-            }
-            else
-            {
-                return _entities;
-            }
-        }
-
-        public async Task<IEnumerable<IdNameDTO>> GetEntitiesIdNameListAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _entities.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-            else
-            {
-                return _entities.Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-        }
-
-        public async Task<EntityDTO> GetEntityAsync(int id)
-        {
-            var entity = _entities.FirstOrDefault(e => e.Id == id);
-            if (entity == null)
-            {
-                throw new KeyNotFoundException($"Entity with ID {id} not found.");
-            }
-            return entity;
-        }
-
-        public async Task<IEnumerable<EntityTypeDTO>> GetEntityTypesAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _entityTypes.Where(d => d.IsActive);
-            }
-            else
-            {
-                return _entityTypes;
-            }
-        }
-
-        public async Task<IEnumerable<IdNameDTO>> GetEntityTypeIdNameListAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _entityTypes.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-            else
-            {
-                return _entityTypes.Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-        }
-
-        public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _technologies.Where(d => d.IsActive);
-            }
-            else
-            {
-                return _technologies;
-            }
-        }
-
-        public async Task<IEnumerable<IdNameDTO>> GetTechnologiesIdNameListAsync(bool activeOnly)
-        {
-            if (activeOnly)
-            {
-                return _technologies.Where(d => d.IsActive).Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-            else
-            {
-                return _technologies.Select(d => new IdNameDTO(d.Id, d.Name));
-            }
-        }
-
-        public async Task UpdateDepartmentAsync(DepartmentDTO department, string userName)
-        {
-            var existingDepartment = _departments.FirstOrDefault(d => d.Id == department.Id);
-            if (existingDepartment != null)
-            {
-                existingDepartment.Name = department.Name;
-                existingDepartment.IsActive = department.IsActive;
-            }
-            else
-            {
-                throw new KeyNotFoundException($"Department with ID {department.Id} not found.");
-            }
-        }
-
-        public async Task UpdateEntityAsync(EntityDTO entity, string userName)
-        {
-            string color = _entityTypes.FirstOrDefault(et => et.Id == entity.TypeId)?.ColorHex ?? "#FFFFFF"; // Default color if not found
-            entity.ColorHex = color;
-            var existingEntity = _entities.FirstOrDefault(e => e.Id == entity.Id);
-            if (existingEntity != null)
-            {
-                existingEntity.Name = entity.Name;
-                existingEntity.Description = entity.Description;
-                existingEntity.SourceControlUrl = entity.SourceControlUrl;
-                existingEntity.Owner = entity.Owner;
-                existingEntity.TypeId = entity.TypeId;
-                existingEntity.Type = entity.Type;
-                existingEntity.DepartmentId = entity.DepartmentId;
-                existingEntity.Department = entity.Department;
-                existingEntity.TechnologyId = entity.TechnologyId;
-                existingEntity.Technology = entity.Technology;
-                existingEntity.ColorHex = entity.ColorHex;
-                existingEntity.IsActive = entity.IsActive;
-                existingEntity.Dependencies = entity.Dependencies;
-            }
-            else
-            {
-                throw new KeyNotFoundException($"Entity with ID {entity.Id} not found.");
-            }
-        }
-
-        public async Task UpdateEntityTypeAsync(EntityTypeDTO entityType, string userName)
-        {
-            var existingEntityType = _entityTypes.FirstOrDefault(et => et.Id == entityType.Id);
-            if (existingEntityType != null)
-            {
-                existingEntityType.Name = entityType.Name;
-                existingEntityType.Description = entityType.Description;
-                existingEntityType.ColorHex = entityType.ColorHex;
-                existingEntityType.IsActive = entityType.IsActive;
-            }
-            else
-            {
-                throw new KeyNotFoundException($"Entity Type with ID {entityType.Id} not found.");
-            }
-        }
-
-        public async Task UpdateTechnologyAsync(TechnologyDTO technology, string userName)
-        {
-            var existingTechnology = _technologies.FirstOrDefault(t => t.Id == technology.Id);
-            if (existingTechnology != null)
-            {
-                existingTechnology.Name = technology.Name;
-                existingTechnology.Description = technology.Description;
-                existingTechnology.IsActive = technology.IsActive;
-            }
-            else
-            {
-                throw new KeyNotFoundException($"Technology with ID {technology.Id} not found.");
-            }
+                dependencies.Add(new EntityDTO
+                {
+                    Id = dependency.EntityId,
+                    Name = dependency.Name,
+                    Description = dependency.Description ?? string.Empty,
+                    TypeId = dependency.EntityTypeId,
+                    Type = dependency.EntityType?.Name ?? string.Empty,
+                    DepartmentId = dependency.DepartmentId,
+                    Department = dependency.Department?.Name ?? string.Empty,
+                    TechnologyId = dependency.TechnologyId,
+                    Technology = dependency.Technology?.Name ?? string.Empty,
+                    SourceControlUrl = dependency.SourceControlUrl ?? string.Empty,
+                    Owner = dependency.Owner ?? string.Empty,
+                    ColorHex = dependency.EntityType?.Apperance ?? "#000000",
+                    IsActive = dependency.Active
+                });
+            });
+            return dependencies;
         }
     }
 }

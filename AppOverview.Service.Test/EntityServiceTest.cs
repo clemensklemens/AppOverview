@@ -158,8 +158,8 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetDepartmentsAsync_ReturnsDepartments()
         {
-            var departments = new List<IdNameDTO> { new IdNameDTO(1, "Dept") };
-            _dataProviderMock.Setup(x => x.GetDepartmentsIdNameListAsync(true)).ReturnsAsync(departments);
+            var departments = new List<IdNameDTO> { new IdNameDTO() { Id = 1, Name = "Dept" } };
+            _dataProviderMock.Setup(x => x.GetDepartmentsAsync(true)).ReturnsAsync(departments);
             var result = await _service.GetDepartmentsAsync();
             Assert.Single(result);
         }
@@ -167,15 +167,15 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetDepartmentsAsync_DataProviderThrows_ThrowsServiceException()
         {
-            _dataProviderMock.Setup(x => x.GetDepartmentsIdNameListAsync(true)).ThrowsAsync(new System.Exception("fail"));
+            _dataProviderMock.Setup(x => x.GetDepartmentsAsync(true)).ThrowsAsync(new System.Exception("fail"));
             await Assert.ThrowsAsync<ServiceException>(() => _service.GetDepartmentsAsync());
         }
 
         [Fact]
         public async Task GetTechnologiesAsync_ReturnsTechnologies()
         {
-            var technologies = new List<IdNameDTO> { new IdNameDTO(1, "Tech") };
-            _dataProviderMock.Setup(x => x.GetTechnologiesIdNameListAsync(true)).ReturnsAsync(technologies);
+            var technologies = new List<IdNameDTO> { new IdNameDTO() { Id = 1, Name = "Tech" } };
+            _dataProviderMock.Setup(x => x.GetTechnologiesAsync(true)).ReturnsAsync(technologies);
             var result = await _service.GetTechnologiesAsync();
             Assert.Single(result);
         }
@@ -183,15 +183,15 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetTechnologiesAsync_DataProviderThrows_ThrowsServiceException()
         {
-            _dataProviderMock.Setup(x => x.GetTechnologiesIdNameListAsync(true)).ThrowsAsync(new System.Exception("fail"));
+            _dataProviderMock.Setup(x => x.GetTechnologiesAsync(true)).ThrowsAsync(new System.Exception("fail"));
             await Assert.ThrowsAsync<ServiceException>(() => _service.GetTechnologiesAsync());
         }
 
         [Fact]
         public async Task GetEntityTypesAsync_ReturnsEntityTypes()
         {
-            var types = new List<IdNameDTO> { new IdNameDTO(1, "Type") };
-            _dataProviderMock.Setup(x => x.GetEntityTypeIdNameListAsync(true)).ReturnsAsync(types);
+            var types = new List<IdNameDTO> { new IdNameDTO() { Id = 1, Name = "Type" } };
+            _dataProviderMock.Setup(x => x.GetEntityTypeIdNameAsync(true)).ReturnsAsync(types);
             var result = await _service.GetEntityTypesAsync();
             Assert.Single(result);
         }
@@ -199,7 +199,7 @@ namespace AppOverview.Service.Test
         [Fact]
         public async Task GetEntityTypesAsync_DataProviderThrows_ThrowsServiceException()
         {
-            _dataProviderMock.Setup(x => x.GetEntityTypeIdNameListAsync(true)).ThrowsAsync(new System.Exception("fail"));
+            _dataProviderMock.Setup(x => x.GetEntityTypeIdNameAsync(true)).ThrowsAsync(new System.Exception("fail"));
             await Assert.ThrowsAsync<ServiceException>(() => _service.GetEntityTypesAsync());
         }
     }

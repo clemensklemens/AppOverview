@@ -1,15 +1,14 @@
 // Code-behind for Technologies.razor
 using AppOverview.Model;
 using AppOverview.Model.DTOs;
-using AppOverview.Model.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace AppOverview.Components.Pages
 {
     public partial class Technologies : ComponentBase
     {
-        private List<TechnologyDTO>? _technologies;
-        private TechnologyDTO _editTechnology = new TechnologyDTO();
+        private List<IdNameDTO>? _technologies;
+        private IdNameDTO _editTechnology = new IdNameDTO();
         private bool _showForm = false;
         private bool _isEdit = false;
         protected bool _nameInvalid = false;
@@ -24,12 +23,12 @@ namespace AppOverview.Components.Pages
 
         private void ShowNewForm()
         {            
-            _editTechnology = new TechnologyDTO();
+            _editTechnology = new IdNameDTO();
             _showForm = true;
             _isEdit = false;
         }
 
-        private void ShowEditForm(TechnologyDTO technology)
+        private void ShowEditForm(IdNameDTO technology)
         {            
             _editTechnology = technology;
             _showForm = true;

@@ -10,7 +10,7 @@ namespace AppOverview.Service
         private readonly IDataProvider _dataProvider = dataProvider;
         private readonly ILogger<TechnologyService> _logger = logger;
 
-        public async Task<TechnologyDTO> AddTechnologyAsync(TechnologyDTO technology, string userName)
+        public async Task<IdNameDTO> AddTechnologyAsync(IdNameDTO technology, string userName)
         {
             if (string.IsNullOrWhiteSpace(technology.Name))
             {
@@ -33,7 +33,7 @@ namespace AppOverview.Service
             }   
         }
 
-        public async Task<IEnumerable<TechnologyDTO>> GetTechnologiesAsync()
+        public async Task<IEnumerable<IdNameDTO>> GetTechnologiesAsync()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace AppOverview.Service
             }
         }
 
-        public async Task UpdateTechnologyAsync(TechnologyDTO technology, string userName)
+        public async Task UpdateTechnologyAsync(IdNameDTO technology, string userName)
         {
             if (string.IsNullOrWhiteSpace(technology.Name))
             {

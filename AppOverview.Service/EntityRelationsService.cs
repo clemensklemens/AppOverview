@@ -23,11 +23,11 @@ namespace AppOverview.Service
             try
             {
                 _entities = (await _dataProvider.GetEntitiesAsync(true)).ToList();
-                _types = _entities.Select(x => new IdNameDTO(x.TypeId, x.Type))
+                _types = _entities.Select(x => new IdNameDTO(){ Id = x.TypeId, Name = x.Type, IsActive = x.IsActive })
                                   .Distinct()
                                   .ToList();
 
-                _departments = _entities.Select(x => new IdNameDTO(x.DepartmentId, x.Department))
+                _departments = _entities.Select(x => new IdNameDTO() { Id = x.TypeId, Name = x.Type, IsActive = x.IsActive })
                                         .Distinct()
                                         .ToList();
             }

@@ -23,9 +23,9 @@ public partial class Entity
 
     public string LastUser { get; set; } = null!;
 
-    public string LastChange { get; set; } = null!;
+    public DateTime? LastChange { get; set; } = null!;
 
-    public int Active { get; set; }
+    public bool Active { get; set; }
 
     public virtual Department Department { get; set; } = null!;
 

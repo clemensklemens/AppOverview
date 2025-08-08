@@ -120,7 +120,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetDepartmentsIdNameListAsync(true)).ToList();
+                return (await _dataProvider.GetDepartmentsAsync(true)).ToList();
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetTechnologiesIdNameListAsync(true)).ToList();
+                return (await _dataProvider.GetTechnologiesAsync(true)).ToList();
             }
             catch (Exception ex)
             {
@@ -148,7 +148,7 @@ namespace AppOverview.Service
         {
             try
             {
-                return (await _dataProvider.GetEntityTypeIdNameListAsync(true)).ToList();
+                return (await _dataProvider.GetEntityTypeIdNameAsync(true)).ToList();
             }
             catch (Exception ex)
             {

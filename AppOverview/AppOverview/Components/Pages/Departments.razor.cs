@@ -7,8 +7,8 @@ namespace AppOverview.Components.Pages
 {
     public partial class Departments : ComponentBase
     {
-        private List<DepartmentDTO>? _departments;
-        private DepartmentDTO _editDepartment = new DepartmentDTO();
+        private List<IdNameDTO>? _departments;
+        private IdNameDTO _editDepartment = new IdNameDTO();
         private bool _showForm = false;
         private bool _isEdit = false;
         private bool _nameInvalid = false;
@@ -22,12 +22,12 @@ namespace AppOverview.Components.Pages
 
         private void ShowNewForm()
         {
-            _editDepartment = new DepartmentDTO();
+            _editDepartment = new IdNameDTO();
             _showForm = true;
             _isEdit = false;
         }
 
-        private void ShowEditForm(DepartmentDTO department)
+        private void ShowEditForm(IdNameDTO department)
         {
             _editDepartment = department;
             _showForm = true;

@@ -26,10 +26,6 @@
             }
         </div>
         <div class="mb-2">
-            <label>Description:</label>
-            <InputText class="form-control" @bind-Value="_editType.Description" />
-        </div>
-        <div class="mb-2">
             <label>Color Hex:</label>
             <InputText class="form-control" type="color" @bind-Value="_editType.ColorHex" />
         </div>
@@ -52,7 +48,6 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Color Hex</th>
                 <th>Active</th>
                 <th></th>
@@ -63,7 +58,6 @@ else
             {
                 <tr @key="type.Id">
                     <td>@type.Name</td>
-                    <td>@type.Description</td>
                     <td><span style="color:@type.ColorHex">@type.ColorHex</span></td>
                     <td>
                         <input type="checkbox" checked="@type.IsActive" disabled />
