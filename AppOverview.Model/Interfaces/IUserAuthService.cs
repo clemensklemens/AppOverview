@@ -4,6 +4,6 @@ namespace AppOverview.Model.Interfaces
 {
     public interface IUserAuthService
     {
-        User GetUserNameAndPermissions();
+        User GetUserNameAndPermissions(); // Now returns IsKnownUser as well
     }
 }
