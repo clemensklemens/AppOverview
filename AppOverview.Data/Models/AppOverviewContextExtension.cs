@@ -27,7 +27,7 @@ namespace AppOverview.Data.Models
                     optionsBuilder.UseSqlite(_connectionString);
                 }
                 else if (_connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase) ||
-                         (_connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase) && _connectionString.Contains(".mdf")))
+                         (_connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase)))
                 {
                     optionsBuilder.UseSqlServer(_connectionString);
                 }
