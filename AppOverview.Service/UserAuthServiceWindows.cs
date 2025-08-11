@@ -13,16 +13,16 @@ namespace AppOverview.Service
 
         public User GetUserNameAndPermissions()
         {
-            User user = new User()
-            {
-                Name = "Unknown",
-                IsAdmin = false,
-                IsKnownUser = false
-            };
+            User user = new User();
             string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             if (string.IsNullOrEmpty(userName))
             {
-                return user;
+                return new User()
+                {
+                    Name = "Unknown",
+                    IsAdmin = false,
+                    IsKnownUser = false
+                };
             }
 
             string cacheKey = $"UserAuth_{userName}";

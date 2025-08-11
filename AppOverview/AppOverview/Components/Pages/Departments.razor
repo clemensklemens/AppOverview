@@ -8,69 +8,75 @@
 
 <ErrorBoundary>
     <ChildContent>
-        <PageTitle>Departments</PageTitle>
-        <NotAuthorized />
-        <h1>Departments</h1>
-        @if (!string.IsNullOrEmpty(_errorMessage))
+        @if (_currentUser is null || !_currentUser.IsKnownUser)
         {
-            <div class="alert alert-danger">@_errorMessage</div>
-        }
-        @if (_currentUser?.IsAdmin == true)
-        {
-            <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Department</button>
-        }
-        @if (_showForm && _currentUser?.IsAdmin == true)
-        {
-            <EditForm Model="_editDepartment" OnValidSubmit="OnSubmitDepartmentAsync">
-                <DataAnnotationsValidator />
-                <div class="mb-2">
-                    <label>Name:</label>
-                    <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editDepartment.Name" />
-                    @if (_nameInvalid)
-                    {
-                        <div class="invalid-feedback">Name is required.</div>
-                    }
-                </div>
-                <div class="mb-2">
-                    <label>Active:</label>
-                    <InputCheckbox class="form-check-input" @bind-Value="_editDepartment.IsActive" />
-                </div>
-                <button class="btn btn-success me-2" type="submit">Save</button>
-                <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
-            </EditForm>
-        }
-        @if (_departments is null)
-        {
-            <p><em>Loading...</em></p>
+            <NotAuthorized />
         }
         else
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Active</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var department in _departments)
-                    {
-                        <tr @key="department.Id">
-                            <td>@department.Name</td>
-                            <td>
-                                <input type="checkbox" checked="@department.IsActive" disabled />
-                            </td>
-                            <td>
-                                @if (_currentUser?.IsAdmin == true)
-                                {
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(department)">Edit</button>
-                                }
-                            </td>
+            <PageTitle>Departments</PageTitle>
+            <h1>Departments</h1>
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="alert alert-danger">@_errorMessage</div>
+            }
+            @if (_currentUser?.IsAdmin == true)
+            {
+                <button class="btn btn-primary mb-3" @onclick="ShowNewForm">New Department</button>
+            }
+            @if (_showForm && _currentUser?.IsAdmin == true)
+            {
+                <EditForm Model="_editDepartment" OnValidSubmit="OnSubmitDepartmentAsync">
+                    <DataAnnotationsValidator />
+                    <div class="mb-2">
+                        <label>Name:</label>
+                        <InputText class="@( _nameInvalid ? "form-control is-invalid" : "form-control" )" @bind-Value="_editDepartment.Name" />
+                        @if (_nameInvalid)
+                        {
+                            <div class="invalid-feedback">Name is required.</div>
+                        }
+                    </div>
+                    <div class="mb-2">
+                        <label>Active:</label>
+                        <InputCheckbox class="form-check-input" @bind-Value="_editDepartment.IsActive" />
+                    </div>
+                    <button class="btn btn-success me-2" type="submit">Save</button>
+                    <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Cancel</button>
+                </EditForm>
+            }
+            @if (_departments is null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Active</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var department in _departments)
+                        {
+                            <tr @key="department.Id">
+                                <td>@department.Name</td>
+                                <td>
+                                    <input type="checkbox" checked="@department.IsActive" disabled />
+                                </td>
+                                <td>
+                                    @if (_currentUser?.IsAdmin == true)
+                                    {
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" @onclick="() => ShowEditForm(department)">Edit</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         }
     </ChildContent>
     <ErrorContent>
